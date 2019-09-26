@@ -3,8 +3,8 @@ Concordia Capstone Project 2019
 ----------------------------
 ##Prerequisites:
 
-* Install [Node.js](https://nodejs.org)
-* Install Firebase (run "npm install firebase-tools -g" in command line after installing Node.js)
+1. Install [Node.js](https://nodejs.org)
+2. Install Firebase (run "npm install firebase-tools -g" in command line after installing Node.js)
 
 ##How to run:
 
