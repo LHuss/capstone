@@ -1,15 +1,19 @@
 # MusicRoom
 Concordia Capstone Project 2019
 ----------------------------
-##Prerequisites:
+## Prerequisites:
 
-1. Install [Node.js](https://nodejs.org)
-2. Install Firebase (run "npm install firebase-tools -g" in command line after installing Node.js)
+1. Install [Unity Hub](https://store.unity.com/download) & Follow instructions to download/Install Unity
+2. Install [Leap Motion SDK](https://warehouse.leapmotion.com/apps/4621/download)
+>  Note that Unity Assets for Leap Motion is already included in the Github repo.
 
-##How to run:
+## Development:
 
-1. Go to \MusicRoom\functions
-2. Run "npm install" to install all the dependencies
-3. Go to the MusicRoom folder
-4. Run "firebase serve"
-5. Open localhost:5000 on your browser
+1. Launch Unity
+2. Select the 'Virtual Modeller' project:\
+`File > Open Project > Open` 
+
+## How to run:
+1. Build the project:\
+`File > Build And Run`
+2. Launch the built project
