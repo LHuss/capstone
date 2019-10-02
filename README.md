@@ -1,4 +1,4 @@
-# MusicRoom
+# Virtual Modeller
 Concordia Capstone Project 2019
 ----------------------------
 ## Prerequisites:
