@@ -3,6 +3,10 @@
 --- !u!310 &1
 UnityConnectSettings:
   m_ObjectHideFlags: 0
+<<<<<<< HEAD
+=======
+  serializedVersion: 1
+>>>>>>> 1e308083e2ba780dfedb42a53a0d83c580a42cea
   m_Enabled: 1
   m_TestMode: 0
   m_TestEventUrl: 
