@@ -377,7 +377,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 520983828}
-        m_MethodName: showDialog
+        m_MethodName: init
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
