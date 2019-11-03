@@ -4,26 +4,52 @@ using System.Windows.Forms;
 using System.IO;
 using UnityEngine;
 using SFB; // StandaloneFileBrowser
+using AsImpL;
 
 public class ImportObj : MonoBehaviour {
 
-	private string fileDir = "";
+	private string[] path;
+	private string filePath = "";
 
 	public void init(){
 
 		Camera cam = Camera.main;
 
-		Debug.Log("0000000000000");	
 		ExtensionFilter[] extensionList = new [] {
                 new ExtensionFilter("Waveform obj", "obj")
             };
-		string[] path = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, false);
-
+		path = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, false);
 		fileResult(path);
-		GameObject gameObject = loadModel(fileDir);
 
-		gameObject.transform.position = cam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f));
+		GameObject gameObject = new GameObject("Mesh");
+		gameObject.AddComponent<Rigidbody>();
+		
+		Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
 
+		if (filePath.Length!=0){
+			ObjectImporter objImporter = gameObject.GetComponent<ObjectImporter>();
+			ImportOptions importOptions = new ImportOptions();
+			importOptions.buildColliders = true;
+			importOptions.modelScaling = 2f;
+			objImporter = gameObject.AddComponent<ObjectImporter>();			
+
+			//rigidbody.isKinematic = true;
+			rigidbody.detectCollisions = true;
+			rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+			objImporter.ImportModelAsync("My Object", filePath, null, importOptions);
+
+			gameObject.transform.position = cam.ScreenToWorldPoint(new Vector3(90f, 160f, -50f));
+
+			Debug.Log("Are kinematics enabled?: " + rigidbody.isKinematic);
+			Debug.Log("Are collision detections enabled?: " + rigidbody.detectCollisions);
+			Debug.Log("Current collision detection mode: " + rigidbody.collisionDetectionMode);
+
+		}
+		else{
+			Debug.Log("Obj file not selected");
+		}
+		
 	}
 
 	public void fileResult(string[] p) {
@@ -31,34 +57,9 @@ public class ImportObj : MonoBehaviour {
         	Debug.Log("file path len = 0");
         }
         else{
-        	foreach (string s in p){
-        		fileDir = p[0];
-        	}
-        	Debug.Log(fileDir);
+        	filePath = p[0];
+        	Debug.Log(filePath);
         }
     }
 
-    /**
-    *	To-do: mesh-rendering and probably more
-    */
-    public GameObject loadModel(string s){
-    	Debug.Log(s);
-    	Mesh mesh1 = FastObjImporter.Instance.ImportFile(s);
-    	Material mat1 = new Material(Shader.Find("Standard"));
-
-    	GameObject gameObj = new GameObject("Model");
-    	
-		MeshFilter meshFilter = gameObj.AddComponent<MeshFilter>();
-    	MeshRenderer meshRenderer = gameObj.AddComponent<MeshRenderer>();
-    	meshFilter.mesh = mesh1;
-    	meshRenderer.material = mat1;
-    	
-    	return gameObj;
-    }
-/*
-	// Update is called once per frame
-	void Update () {
-		
-	}
-	*/
 }
