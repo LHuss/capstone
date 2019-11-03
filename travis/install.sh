@@ -4,7 +4,7 @@
 # to get download URLs
 UNITY_DOWNLOAD_CACHE="$(pwd)/unity_download_cache"
 UNITY_OSX_PACKAGE_URL="https://download.unity3d.com/download_unity/9c8dbc3421cb/MacEditorInstaller/Unity.pkg"
-UNITY_WINDOWS_TARGET_PACKAGE_URL="https://download.unity3d.com/download_unity/9c8dbc3421cb/TargetSupportInstaller/UnitySetup-Mac-Support-for-Editor-2017.4.31f1.exe"
+UNITY_WINDOWS_TARGET_PACKAGE_URL="https://download.unity3d.com/download_unity/9c8dbc3421cb/MacEditorTargetInstaller/UnitySetup-Windows-Support-for-Editor-2017.4.31f1.pkg"
 
 
 # Downloads a file if it does not exist
