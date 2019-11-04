@@ -7,12 +7,12 @@ public class ActivateGravity : MonoBehaviour {
 	// Use this for initialization
 	public void init () {
 		GameObject hugeSphere = GameObject.Find("HugeSphere");
-		hugeSphere.AddComponent<Rigidbody>();
+		if (hugeSphere.GetComponent<Rigidbody>()==null){
+			hugeSphere.AddComponent<Rigidbody>();
+		}
 		Rigidbody rigidbody = hugeSphere.GetComponent<Rigidbody>();
-
 		rigidbody.useGravity = true;
 	}
-
 	
 	/*
 	// Update is called once per frame
