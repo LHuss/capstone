@@ -7,7 +7,13 @@ public abstract class Tool : MonoBehaviour {
     protected ToolType type;
     protected Vector3 localScale;
 
-    public float toolSpeed = 10.0f;
+    protected float toolSpeed = 10.0f;
+
+    protected bool IsActive {
+        get {
+            return type == ToolController.Instance.ActiveToolType;
+        }
+    }
 
     public GameObject ToolObject {
         get {
@@ -28,8 +34,15 @@ public abstract class Tool : MonoBehaviour {
     }
 
 	void Update () {
-        // Only do calculations if inputs are detected
-        if (!Input.anyKey || Input.GetMouseButton(0)) {
+        if(IsActive) {
+            UpdateTool();
+            UpdateGameObject(); 
+        } 
+	}
+
+    protected virtual void UpdateTool() {
+        // Only move if left shift is held
+        if (Input.GetKey(KeyCode.LeftShift)) {
             float dx = Input.GetAxis("Mouse X");
             float dy = Input.GetAxis("Mouse Y");
             float dt = Time.deltaTime;
@@ -45,10 +58,8 @@ public abstract class Tool : MonoBehaviour {
                 pos.y += y;
             }      
             ToolController.Instance.ToolPosition = pos;   
-
-            UpdateGameObject();  
         }
-	} 
+    }
 
     protected void UpdateGameObject() {
         tool.transform.position = ToolController.Instance.ToolPosition;

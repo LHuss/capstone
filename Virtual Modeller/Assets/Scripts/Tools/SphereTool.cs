@@ -10,4 +10,9 @@ public class SphereTool : Tool {
 		localScale = new Vector3(1.0f, 1.0f, 1.0f);
 		UpdateGameObject();
 	}
+
+	protected override void UpdateTool() {
+		// Do nothing
+		Debug.Log("Updating Sphere. Should not move.");
+	}
 }
