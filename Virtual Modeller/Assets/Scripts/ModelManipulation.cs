@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class ModelManipulation : MonoBehaviour { 
 	
-	private static float COLLISION_PRECISION = 0.05F;	
+	private static float COLLISION_PRECISION = 0.05F;
+ 	private MeshFilter objectMesh;
+
+	
+	void Awake(){
+		objectMesh = GetComponent<MeshFilter>();
+	}
 
 	void OnCollisionEnter(Collision collision){
-		MeshFilter objectMesh = GetComponent<MeshFilter>();
 		Vector3[] vertices = objectMesh.mesh.vertices;
 		Vector3[] normals = objectMesh.mesh.normals;
 
@@ -24,9 +29,17 @@ public class ModelManipulation : MonoBehaviour {
 				}
 			}
 		}
-		objectMesh.mesh.vertices = vertices;
+		UpdateMesh(vertices);
+	}
+
+	private void UpdateMesh(Vector3[] localVertices){
+		objectMesh.mesh.vertices = localVertices;
 		objectMesh.mesh.RecalculateNormals();
 		objectMesh.mesh.RecalculateBounds();
+		UpdateCollider();
+	}
+
+	private void UpdateCollider(){
 		GetComponent<MeshCollider>().sharedMesh = null;
 		GetComponent<MeshCollider>().sharedMesh = objectMesh.mesh;
 	}
