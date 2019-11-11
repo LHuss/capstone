@@ -6,7 +6,7 @@ public class ModelManipulation : MonoBehaviour {
 	
 	private static float COLLISION_PRECISION = 0.05F;
 	private static float DEFORMATION_FORCE = 1F;
- 	private MeshFilter objectMesh;
+	private MeshFilter objectMesh;
 	
 	/*
 	*	Assign Mesh filter to class variable to reduce mem-alloc each time
@@ -32,25 +32,25 @@ public class ModelManipulation : MonoBehaviour {
 			Vector3 globalPoint = transform.TransformPoint(vertices[i]);
 			foreach (ContactPoint contact in contactPoints){
 				if (_sameGlobalPoint(contact.point, globalPoint)){
-					vertices[i] = _pushDeformation(globalPoint, contact.normal);
+					vertices[i] = PushDeformation(globalPoint, contact.normal);
 				}
 			}
 		}
 		_updateMesh(vertices);
 	}
 
-	private Vector3 _pushDeformation(Vector3 point, Vector3 normal){
+	public Vector3 PushDeformation(Vector3 point, Vector3 normal){
 		// transform global position to mesh's local position
-		return transform.InverseTransformPoint(point + _getCollisionNormal(normal));
+		return transform.InverseTransformPoint(point + GetCollisionNormal(normal));
 	}
 
-	private Vector3 _pullDeformation(Vector3 point, Vector3 normal){
+	public Vector3 PullDeformation(Vector3 point, Vector3 normal){
 		// transform global position to mesh's local position
-		return transform.InverseTransformPoint(point - _getCollisionNormal(normal));
+		return transform.InverseTransformPoint(point - GetCollisionNormal(normal));
 	}
 
 	// returns deformation intensity depending on DEFORMATION_FORCE
-	private Vector3 _getCollisionNormal(Vector3 collisionNormal){
+	public Vector3 GetCollisionNormal(Vector3 collisionNormal){
 		return collisionNormal * DEFORMATION_FORCE * 0.001F;
 	}
 
@@ -71,7 +71,7 @@ public class ModelManipulation : MonoBehaviour {
 	private static bool _sameGlobalPoint(Vector3 v1, Vector3 v2)
 	{
 		return !(Mathf.Abs(v1.x - v2.x) > COLLISION_PRECISION ||
-			     Mathf.Abs(v1.y - v2.y) > COLLISION_PRECISION ||
-			     Mathf.Abs(v1.z - v2.z) > COLLISION_PRECISION);
+				Mathf.Abs(v1.y - v2.y) > COLLISION_PRECISION ||
+				Mathf.Abs(v1.z - v2.z) > COLLISION_PRECISION);
 	}
 }
