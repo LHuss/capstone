@@ -1,21 +1,50 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using SimpleFileBrowser;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public void QuitApplication ()
+    public MainMenuController mainMenuController;
+    public GameObject loginMenu;
+    public GameObject optionsMenu;
+    public GameObject mainMenu;
+    private bool show;
+
+    public void Awake()
     {
-        Debug.Log("QUIT!");
-        Application.Quit();
+        loginMenu = GameObject.Find("LoginMenu");
+        optionsMenu = GameObject.Find("OptionsMenu");
+        mainMenu = GameObject.Find("MainMenu");
+        show = true;
+        ShowMainMenu();
     }
 
-    public void OpenExplorer()
+    public void Start()
+    {  
+    }
+
+    public void ShowMainMenu()
     {
-        StartCoroutine(ShowLoadDialogCoroutine());
+        //this.mainMenuController.ActivateMainMenu(this.mainMenu, this.optionsMenu, this.loginMenu);
+        mainMenu.SetActive(show);
+        loginMenu.SetActive(!show);
+        optionsMenu.SetActive(!show);
+    }
+
+    public void ShowOptionsMenu()
+    {
+        //this.mainMenuController.ActivateMainMenu(this.mainMenu, this.optionsMenu, this.loginMenu);
+        mainMenu.SetActive(!show);
+        loginMenu.SetActive(!show);
+        optionsMenu.SetActive(show);
+    }
+
+    public void ShowLoginMenu()
+    {
+        //this.mainMenuController.ActivateLoginMenu(this.mainMenu, this.optionsMenu, this.loginMenu);
+        mainMenu.SetActive(!show);
+        loginMenu.SetActive(show);
+        optionsMenu.SetActive(!show);
     }
 
     public void LoadScene (string sceneName)
@@ -23,23 +52,10 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    IEnumerator ShowLoadDialogCoroutine()
+    public void QuitApplication()
     {
-        // Show a load file dialog and wait for a response from user
-        // Load file/folder: file, Initial path: default (Documents), Title: "Load File", submit button text: "Load"
-        yield return FileBrowser.WaitForLoadDialog(false, null, "Load File", "Load");
-
-        // Dialog is closed
-        // Print whether a file is chosen (FileBrowser.Success)
-        // and the path to the selected file (FileBrowser.Result) (null, if FileBrowser.Success is false)
-        Debug.Log(FileBrowser.Success + " " + FileBrowser.Result);
-
-        if (FileBrowser.Success)
-        {
-            // If a file was chosen, read its bytes via FileBrowserHelpers
-            // Contrary to File.ReadAllBytes, this function works on Android 10+, as well
-            byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(FileBrowser.Result);
-        }
+        Debug.Log("QUIT!");
+        Application.Quit();
     }
 
 }
