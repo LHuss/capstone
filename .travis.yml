@@ -1,0 +1,37 @@
+language: csharp
+osx_image: xcode9.2
+rvm:
+- 2.2
+
+env:
+- TRAVIS_TAG="Deploy-2017.4.31f" PROJECT_NAME="UnityExamplePackage" UNITY_PROJECT_PATH="UnityExample" DEPLOY_UNITYPACKAGE="path set in deploy script"
+
+cache:
+  directories:
+    - $UNITY_DOWNLOAD_CACHE
+
+before_install:
+- chmod a+x ./travis/*.sh
+
+install:
+- cat /etc/hosts
+- ./travis/install.sh
+
+script:
+- ./travis/build.sh
+- ./travis/run.sh
+
+after_success:
+- ./travis/export-unity-package.sh
+
+before_deploy:
+- DEPLOY_UNITYPACKAGE="$(ls -a release/*.zip | head -n 1)"
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: $DEPLOY_UNITYPACKAGE
+  skip_cleanup: true
+  overwrite: true
+  on:
+    tags: true
