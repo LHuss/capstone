@@ -40,7 +40,7 @@ public class MeshController : Singleton<MeshController> {
 		_deformationForce = 0.001F;
 		_collisionPrecision = 0.04F;
 		AttachMesh(this.gameObject);
-		// _model.Subdivide();
+		_model.Subdivide();
 	}
 
 	/*

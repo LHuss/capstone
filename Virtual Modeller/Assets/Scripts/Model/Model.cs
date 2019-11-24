@@ -31,6 +31,7 @@ public class Model : MonoBehaviour{
 
     public void Subdivide()
     {
+        Debug.Log("Pre-subdivision vertex count: " + _vertices.Count);
         // Dictionary containing newly generated vertices, used to check if vertex already exists
         Dictionary<uint,int> newVertices = new Dictionary<uint,int>();
 
@@ -46,15 +47,17 @@ public class Model : MonoBehaviour{
             int b = _GetNewVertex(i2, i3, newVertices);
             int c = _GetNewVertex(i3, i1, newVertices);
 
-            newTriangles.Add(i1);   newTriangles.Add(a);   newTriangles.Add(c);
-            newTriangles.Add(i2);   newTriangles.Add(b);   newTriangles.Add(a);
-            newTriangles.Add(i3);   newTriangles.Add(c);   newTriangles.Add(b);
-            newTriangles.Add(a);   newTriangles.Add(b);   newTriangles.Add(c);
+            newTriangles.Add(i1);   newTriangles.Add(a);   newTriangles.Add(c); // top triangle
+            newTriangles.Add(i2);   newTriangles.Add(b);   newTriangles.Add(a); // left triangle
+            newTriangles.Add(i3);   newTriangles.Add(c);   newTriangles.Add(b); // right triangle
+            newTriangles.Add(a);   newTriangles.Add(b);   newTriangles.Add(c);  // center triangle
         }
         _triangles = newTriangles;
         UpdateMesh();
         UpdateCollider();
-		Debug.Log("Subdivided Model");
+        Debug.Log("Post-subdivision vertex count: " + _vertices.Count);
+
+        // Based on Bunny83's answer https://bit.ly/33khaNj
     }
 
 	// reassign computed vertices to mesh vertices (update mesh for rendering)
