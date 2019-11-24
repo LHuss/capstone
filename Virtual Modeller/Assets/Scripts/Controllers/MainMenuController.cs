@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-
 public class MainMenuController : MonoBehaviour {
 
     private readonly bool showMenu = true;
@@ -24,5 +23,4 @@ public class MainMenuController : MonoBehaviour {
         loginMenu.SetActive(showMenu);
         optionsMenu.SetActive(!showMenu);
     }
-
 }
