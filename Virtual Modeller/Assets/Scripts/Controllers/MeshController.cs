@@ -40,6 +40,7 @@ public class MeshController : Singleton<MeshController> {
 		_deformationForce = 0.001F;
 		_collisionPrecision = 0.04F;
 		AttachMesh(this.gameObject);
+		// _model.Subdivide();
 	}
 
 	/*
@@ -51,7 +52,7 @@ public class MeshController : Singleton<MeshController> {
 		// collision point (Global position), deform mesh if they are about the same
 		// TODO: mesh deformation optimization (checking of mesh vertex against contact point)
 		ContactPoint[] contactPoints = collision.contacts;
-		for (int i = 0; i < _model.Vertices.Length; i++){
+		for (int i = 0; i < _model.Vertices.Count; i++){
 			Vector3 globalPoint = transform.TransformPoint(_model.Vertices[i]);
 			foreach (ContactPoint contact in contactPoints){
 				if (_SameGlobalPoint(contact.point, globalPoint)){
