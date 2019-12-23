@@ -88,6 +88,14 @@ public class CameraController : Singleton<CameraController> {
 		}
 	}
 
+	public void ResetCamera(Transform tc, Transform tp, Quaternion sa){
+		Debug.Log("Resetting camera view");
+		tp.rotation = Quaternion.Lerp(tp.rotation, sa, Time.time*rotationSpeed);
+		this.rotationVect.x = 0;
+		this.rotationVect.y = 0;
+		this.cameraDistance = 10f;
+	}
+
 	public void OrbitCamera(float xmovement, float ymovement){
 		rotationVect.x += xmovement * orbitSensitivity;
 		rotationVect.y -= ymovement * orbitSensitivity;
@@ -116,7 +124,7 @@ public class CameraController : Singleton<CameraController> {
 		return scrollDepth;
 	}
 
-	public void HandleCamera(Transform tc, Transform tp){
+	public void HandleCamera(Transform tc, Transform tp, Quaternion sa){
 
 		Vector3 pos = tc.position;
 
@@ -126,14 +134,28 @@ public class CameraController : Singleton<CameraController> {
 
 		if(!isMovementRestricted){
 
-			float mouseXInputAmount = Input.GetAxis(mouseXAxisInput);
-			float mouseYInputAmount = Input.GetAxis(mouseYAxisInput);
 			float mouseScrollInputAmount = Input.GetAxis(mouseScrollWheelInput);
 			float kbPan = Input.GetAxis("Horizontal") * panSensitivity * Time.deltaTime * 20f;
-
-			// Orbit camera using mouse
+			float mouseXInputAmount = Input.GetAxis(mouseXAxisInput);
+			float mouseYInputAmount = Input.GetAxis(mouseYAxisInput);
+			
+			// Orbit using mouse
 			if(mouseXInputAmount!=0 || mouseYInputAmount!=0){
 				OrbitCamera(mouseXInputAmount, mouseYInputAmount);				
+			}
+
+			// Orbit using keyboard
+			if(Input.GetKey("left")){ 
+				OrbitCamera(Time.deltaTime*this.orbitSensitivity*5f, 0f);
+			}
+			if(Input.GetKey("right")){ 
+				OrbitCamera(Time.deltaTime*this.orbitSensitivity*-1*5f, 0f);
+			}
+			if(Input.GetKey("up")){ 
+				OrbitCamera(0f, Time.deltaTime*this.orbitSensitivity*-1*5f);
+			}
+			if(Input.GetKey("down")){ 
+				OrbitCamera(0f, Time.deltaTime*this.orbitSensitivity*5f);
 			}
 
 			// Zoom camera using mouse wheel
@@ -149,20 +171,6 @@ public class CameraController : Singleton<CameraController> {
 
 			}
 
-			// Orbit camera using keyboard
-			if(Input.GetKey("left")){ 
-				OrbitCamera(Time.deltaTime*this.orbitSensitivity*5f, 0f);
-			}
-			if(Input.GetKey("right")){ 
-				OrbitCamera(Time.deltaTime*this.orbitSensitivity*-1*5f, 0f);
-			}
-			if(Input.GetKey("up")){ 
-				OrbitCamera(0f, Time.deltaTime*this.orbitSensitivity*-1*5f);
-			}
-			if(Input.GetKey("down")){ 
-				OrbitCamera(0f, Time.deltaTime*this.orbitSensitivity*5f);
-			}
-
 			// Zoom camera using keyboard
 			if(Input.GetKey("-")){ // zoom out with -
 				Debug.Log("Zooming by " + ZoomCamera(Time.deltaTime*this.zoomSensitivity) + " units.");
@@ -170,16 +178,26 @@ public class CameraController : Singleton<CameraController> {
 			if(Input.GetKey("=")){ // zoom in with +
 				Debug.Log("Zooming by " + ZoomCamera(Time.deltaTime*this.zoomSensitivity*-1) + " units.");
 			}
+
+			// Reset camera
+			if(Input.GetKey("r")){
+				ResetCamera(tc, tp, sa);
+			}
+
+			// Prints the current camera position
+			if(Input.GetKey("p")){
+				Debug.Log("Getting current camera position...");
+				Debug.Log(tc.position);
+			}
+
+			// rotation
+			Quaternion q = Quaternion.Euler(rotationVect.y, rotationVect.x, 0);
+			tp.rotation = Quaternion.Lerp(tp.rotation, q, Time.deltaTime*rotationSpeed);
+
+			//zoom		
+			tc.localPosition = new Vector3(0f, 0f, Mathf.Lerp(tc.localPosition.z, this.cameraDistance*-1f, Time.deltaTime * this.mouseScrollDampening));		
 			
 		}
-
-		Quaternion q = Quaternion.Euler(rotationVect.y, rotationVect.x, 0);
-
-		//rotation
-		tp.rotation = Quaternion.Lerp(tp.rotation, q, Time.deltaTime*rotationSpeed);
-
-		//zoom		
-		tc.localPosition = new Vector3(0f, 0f, Mathf.Lerp(tc.localPosition.z, this.cameraDistance*-1f, Time.deltaTime * this.mouseScrollDampening));
 	
 	}
 
