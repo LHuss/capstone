@@ -91,6 +91,7 @@ public class CameraController : Singleton<CameraController> {
 	public void ResetCamera(Transform tc, Transform tp, Quaternion sa){
 		Debug.Log("Resetting camera view");
 		tp.rotation = Quaternion.Lerp(tp.rotation, sa, Time.time*rotationSpeed);
+		tp.position = new Vector3(0,0,0);
 		this.rotationVect.x = 0;
 		this.rotationVect.y = 0;
 		this.cameraDistance = 10f;
@@ -126,7 +127,7 @@ public class CameraController : Singleton<CameraController> {
 
 	public void HandleCamera(Transform tc, Transform tp, Quaternion sa){
 
-		Vector3 pos = tc.position;
+		Vector3 tpPos = tp.position;
 
 		if(Input.GetKeyDown(disableCamera)){
 			ToggleMvmtRestriction();
@@ -135,7 +136,6 @@ public class CameraController : Singleton<CameraController> {
 		if(!isMovementRestricted){
 
 			float mouseScrollInputAmount = Input.GetAxis(mouseScrollWheelInput);
-			float kbPan = Input.GetAxis("Horizontal") * panSensitivity * Time.deltaTime * 20f;
 			float mouseXInputAmount = Input.GetAxis(mouseXAxisInput);
 			float mouseYInputAmount = Input.GetAxis(mouseYAxisInput);
 			
@@ -166,9 +166,11 @@ public class CameraController : Singleton<CameraController> {
 			// Pan left and right using keyboard
 			if(Input.GetKey("a")){
 				Debug.Log("Panning left..");
-				Vector3 strafeLeft = new Vector3(kbPan, 0f, 0f);
-				tp.position = strafeLeft;					
-
+				tp.Translate(Vector3.left * panSensitivity * Time.deltaTime, Space.Self);
+			}
+			if(Input.GetKey("d")){
+				Debug.Log("Panning right..");
+				tp.Translate(Vector3.right * panSensitivity * Time.deltaTime, Space.Self);
 			}
 
 			// Zoom camera using keyboard

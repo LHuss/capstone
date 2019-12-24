@@ -21,14 +21,7 @@ public class VMCamera : MonoBehaviour {
 	}
 
 	void LateUpdate(){
-
-		if(Input.GetKey("p")){
-			Debug.Log("Getting current camera position...");
-			Debug.Log(this.transformCamera.position);
-			Debug.Log("rotation angle:" + this.transformParent.rotation);
-		}
-		else{			
-			CameraController.Instance.HandleCamera(this.transformCamera, this.transformParent, this.startingAngle);
-		}
+		CameraController.Instance.HandleCamera(this.transformCamera, this.transformParent, this.startingAngle);		
 	}
+	
 }
