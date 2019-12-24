@@ -14,7 +14,7 @@ public class VMCamera : MonoBehaviour {
 			
 		this.transformCamera = this.transform;
 		this.transformParent = this.transform.parent;
-		this.startingPosition = new Vector3(transformCamera.position.x, transformCamera.position.y, transformCamera.position.z);
+		//this.startingPosition = new Vector3(transformCamera.position.x, transformCamera.position.y, transformCamera.position.z);
 		this.startingAngle = transformParent.rotation;
 		Debug.Log(transformCamera.position);
 		Debug.Log(transformCamera.localPosition);
