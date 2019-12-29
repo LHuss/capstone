@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 194585361}
   - component: {fileID: 194585365}
   m_Layer: 0
-  m_Name: VMCamera
+  m_Name: VMCam
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
