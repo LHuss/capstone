@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
@@ -32,11 +31,6 @@ public class MainMenu : MonoBehaviour
     public void ShowLoginMenu()
     {
         mainMenuController.ActivateLoginMenu(mainMenu, optionsMenu, loginMenu);
-    }
-
-    public void LoadScene (string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
     }
 
     public void QuitApplication()
