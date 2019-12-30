@@ -5,20 +5,16 @@ using UnityEngine;
 public class Model : MonoBehaviour{
 	private static MeshFilter _meshFilter;
 	private float scale;
-	public List<Vector3> _vertices;
+	private List<Vector3> _vertices;
 	private List<Vector3> _normals;
     private List<int> _triangles;
-    private Dictionary<string,List<int>> _verticesDict;
 
 	public float Scale { get; set; }
     public List<Vector3> Vertices { get { return _vertices; } private set{} }
 	public List<Vector3> Normals { get {return _normals; } private set{} }
 	public List<int> Triangles { get {return _triangles; } private set{} }
-	public Dictionary<string,List<int>> VerticesDict {
-        get{ return _verticesDict; }
-        set{ _verticesDict = value; }
-    }
 
+    
     /*
 	*	Assign Mesh filter to class variable to reduce mem-alloc each time
 	*	a collision occurs
@@ -75,25 +71,6 @@ public class Model : MonoBehaviour{
 	public void UpdateCollider(){
 		GetComponent<MeshCollider>().sharedMesh = null;
 		GetComponent<MeshCollider>().sharedMesh = _meshFilter.mesh;
-	}    
-
-	public void UpdateVerticesDict(int accuracy){
-        // Global Vector3 point will point to corresponding mesh vertex's index
-        _verticesDict = new Dictionary<string, List<int>>();
-		for(int i = 0; i < _vertices.Count; i++){
-			Vector3 globalV = transform.TransformPoint(_vertices[i]);
-			string key = (
-                globalV.x.ToString().Substring(0, accuracy) +
-                globalV.y.ToString().Substring(0, accuracy) +
-                globalV.z.ToString().Substring(0, accuracy)
-            );
-			if(!_verticesDict.ContainsKey(key)){
-				_verticesDict.Add(key, new List<int>(){i});
-			}
-            else{
-                _verticesDict[key].Add(i);
-            }
-		}
 	}
 
     private int _GetNewVertex(int i1, int i2, Dictionary<uint, int> newVectices)
