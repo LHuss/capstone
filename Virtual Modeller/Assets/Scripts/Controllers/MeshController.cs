@@ -5,7 +5,7 @@ using UnityEngine;
 public class MeshController : Singleton<MeshController> {
 	private static Model _model;
 	private DeformationType _deformationType;
-	private static float _collisionPrecision;
+	private static int _collisionAccuracy;
 	private static float _deformationForce;
 
 
@@ -17,9 +17,9 @@ public class MeshController : Singleton<MeshController> {
 		get{ return _deformationType; }
 		set{ _deformationType = value; }
 	}
-	public float CollisionPrecision {
-		get{ return _collisionPrecision; }
-		set{ _collisionPrecision = value; }
+	public int CollisionAccuracy {
+		get{ return _collisionAccuracy; }
+		set{ _collisionAccuracy = value; }
 	}
 	public float CollisionForce {
 		get{ return _deformationForce; }
@@ -37,10 +37,11 @@ public class MeshController : Singleton<MeshController> {
 	void Awake(){
 		Debug.Log("Initialize MeshController");
 		_deformationType = DeformationType.PUSH;
-		_deformationForce = 0.001F;
-		_collisionPrecision = 0.04F;
+		_deformationForce = 0.05F;
+		_collisionAccuracy = 4;
 		AttachMesh(this.gameObject);
 		_model.Subdivide();
+		_model.UpdateVerticesDict(_collisionAccuracy);
 	}
 
 	/*
@@ -49,15 +50,35 @@ public class MeshController : Singleton<MeshController> {
 	*/
 	void OnCollisionEnter(Collision collision){
 		// Check each of model's vertex (Global position) against
-		// collision point (Global position), deform mesh if they are about the same
+		// collision point (Global position), deform mesh if they are the same
 		// TODO: mesh deformation optimization (checking of mesh vertex against contact point)
 		ContactPoint[] contactPoints = collision.contacts;
-		for (int i = 0; i < _model.Vertices.Count; i++){
-			Vector3 globalPoint = transform.TransformPoint(_model.Vertices[i]);
-			foreach (ContactPoint contact in contactPoints){
-				if (_SameGlobalPoint(contact.point, globalPoint)){
-					_model.Vertices[i] = _Deform(globalPoint, contact.normal);
+		foreach (ContactPoint contact in contactPoints){
+			string contactKey = (
+				contact.point.x.ToString().Substring(0, _collisionAccuracy) +
+				contact.point.y.ToString().Substring(0, _collisionAccuracy) +
+				contact.point.z.ToString().Substring(0, _collisionAccuracy)
+			);
+			if (_model.VerticesDict.ContainsKey(contactKey)){
+				// Modify all points under the same key
+				for(int i = 0; i < _model.VerticesDict[contactKey].Count; i++){
+					int vertexIndex = _model.VerticesDict[contactKey][i];
+					// These points need to be more accurate because they are the actual mesh vertices
+					_model.Vertices[vertexIndex] = _Deform(
+						transform.TransformPoint(_model.Vertices[vertexIndex]),
+						contact.normal);
 				}
+				// Assign new key to vertices list after deformation
+				Vector3 newPoint = _Deform(
+					transform.TransformPoint(contact.point),
+					contact.normal);
+				string newKey = (
+					newPoint.x.ToString().Substring(0, _collisionAccuracy) +
+					newPoint.y.ToString().Substring(0, _collisionAccuracy) +
+					newPoint.z.ToString().Substring(0, _collisionAccuracy)
+				);
+				_model.VerticesDict[newKey] = _model.VerticesDict[contactKey];
+				_model.VerticesDict.Remove(contactKey);
 			}
 		}
 		_model.UpdateMesh();
@@ -75,11 +96,5 @@ public class MeshController : Singleton<MeshController> {
 	// returns deformation intensity depending on DEFORMATION_FORCE
 	private Vector3 _GetCollisionNormal(Vector3 collisionNormal){
 		return collisionNormal * _deformationForce;
-	}
-
-	private static bool _SameGlobalPoint(Vector3 v1, Vector3 v2){
-		return !(Mathf.Abs(v1.x - v2.x) > _collisionPrecision ||
-			     Mathf.Abs(v1.y - v2.y) > _collisionPrecision ||
-			     Mathf.Abs(v1.z - v2.z) > _collisionPrecision);
 	}
 }
