@@ -10,6 +10,7 @@ public class ImportObj : MonoBehaviour {
 
 	private string[] path;
 	private string filePath = "";
+    private MeshController meshController;
 
 	public void OpenFile(){
 
@@ -31,13 +32,8 @@ public class ImportObj : MonoBehaviour {
 	public void importObjFromFile(string fp){
 		Camera cam = Camera.main;
 
-		GameObject gameObject = new GameObject("Mesh");
-		gameObject.AddComponent<Rigidbody>();
-		
-		Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
-        //rigidbody.isKinematic = true;
-        rigidbody.detectCollisions = true;
-        rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+		//ameObject gameObject = new GameObject("Mesh");
+
 
         //ObjectImporter objImporter = gameObject.GetComponent<ObjectImporter>();
         ImportOptions importOptions = new ImportOptions();
@@ -51,15 +47,25 @@ public class ImportObj : MonoBehaviour {
         objImporter.ImportedModel += (GameObject importedObject, string path) =>
         {
             //Do stuff with gameObject
-            importedObject.AddComponent<ModelManipulation>();
+            importedObject.AddComponent<MeshFilter>();
+            importedObject.AddComponent<MeshCollider>();
+            MeshCollider objMeshCollider = importedObject.GetComponent<MeshCollider>();
+            importedObject.AddComponent<Model>();
+            importedObject.AddComponent<Rigidbody>();
+            Rigidbody rigidbody = importedObject.GetComponent<Rigidbody>();
+            rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ;
+            rigidbody.isKinematic = true;
+            rigidbody.detectCollisions = true;
+            rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            Debug.Log("Are kinematics enabled?: " + rigidbody.isKinematic);
+            Debug.Log("Are collision detections enabled?: " + rigidbody.detectCollisions);
+            Debug.Log("Current collision detection mode: " + rigidbody.collisionDetectionMode);
             importedObject.transform.localScale = new Vector3(10, 10, 10);
             importedObject.transform.Translate(350, 200, 0);
         };
         gameObject.transform.position = cam.ScreenToWorldPoint(new Vector3(90f, 160f, -50f));
 
-        Debug.Log("Are kinematics enabled?: " + rigidbody.isKinematic);
-		Debug.Log("Are collision detections enabled?: " + rigidbody.detectCollisions);
-		Debug.Log("Current collision detection mode: " + rigidbody.collisionDetectionMode);
+
 	}
 
 	public void fileResult(string[] p) {
@@ -71,6 +77,5 @@ public class ImportObj : MonoBehaviour {
         	Debug.Log(filePath);
         }
     }
-   
 
 }
