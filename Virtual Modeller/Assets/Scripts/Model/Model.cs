@@ -5,15 +5,16 @@ using UnityEngine;
 public class Model : MonoBehaviour{
 	private static MeshFilter _meshFilter;
 	private float scale;
-	public List<Vector3> Vertices;
+	public List<Vector3> _vertices;
 	private List<Vector3> _normals;
     private List<int> _triangles;
-    private SortedDictionary<string,List<int>> _verticesDict;
+    private Dictionary<string,List<int>> _verticesDict;
 
 	public float Scale { get; set; }
+    public List<Vector3> Vertices { get { return _vertices; } private set{} }
 	public List<Vector3> Normals { get {return _normals; } private set{} }
 	public List<int> Triangles { get {return _triangles; } private set{} }
-	public SortedDictionary<string,List<int>> VerticesDict {
+	public Dictionary<string,List<int>> VerticesDict {
         get{ return _verticesDict; }
         set{ _verticesDict = value; }
     }
@@ -24,7 +25,7 @@ public class Model : MonoBehaviour{
 	*/
 	public void Awake(){
 		_meshFilter = GetComponent<MeshFilter>();
-        Vertices = new List<Vector3>(_meshFilter.mesh.vertices);
+        _vertices = new List<Vector3>(_meshFilter.mesh.vertices);
         _normals = new List<Vector3>(_meshFilter.mesh.normals);
         _triangles = new List<int>(_meshFilter.mesh.triangles);
         UpdateMesh();
@@ -34,7 +35,7 @@ public class Model : MonoBehaviour{
 
     public void Subdivide()
     {
-        Debug.Log("Pre-subdivision vertex count: " + Vertices.Count);
+        Debug.Log("Pre-subdivision vertex count: " + _vertices.Count);
         // Dictionary containing newly generated vertices, used to check if vertex already exists
         Dictionary<uint,int> newVertices = new Dictionary<uint,int>();
 
@@ -58,14 +59,14 @@ public class Model : MonoBehaviour{
         _triangles = newTriangles;
         UpdateMesh();
         UpdateCollider();
-        Debug.Log("Post-subdivision vertex count: " + Vertices.Count);
+        Debug.Log("Post-subdivision vertex count: " + _vertices.Count);
 
         // Based on Bunny83's answer https://bit.ly/33khaNj
     }
 
 	// reassign computed vertices to mesh vertices (update mesh for rendering)
 	public void UpdateMesh(){
-        _meshFilter.mesh.vertices = Vertices.ToArray();
+        _meshFilter.mesh.vertices = _vertices.ToArray();
         _meshFilter.mesh.normals = _normals.ToArray();
         _meshFilter.mesh.triangles = _triangles.ToArray();
 	}
@@ -78,9 +79,9 @@ public class Model : MonoBehaviour{
 
 	public void UpdateVerticesDict(int accuracy){
         // Global Vector3 point will point to corresponding mesh vertex's index
-        _verticesDict = new SortedDictionary<string, List<int>>();
-		for(int i = 0; i < Vertices.Count; i++){
-			Vector3 globalV = transform.TransformPoint(Vertices[i]);
+        _verticesDict = new Dictionary<string, List<int>>();
+		for(int i = 0; i < _vertices.Count; i++){
+			Vector3 globalV = transform.TransformPoint(_vertices[i]);
 			string key = (
                 globalV.x.ToString().Substring(0, accuracy) +
                 globalV.y.ToString().Substring(0, accuracy) +
@@ -106,10 +107,10 @@ public class Model : MonoBehaviour{
             return newVectices[t1];
 
         // generate vertex:
-        int newIndex = Vertices.Count;
+        int newIndex = _vertices.Count;
         newVectices.Add(t1, newIndex);
         // Add vertex between i1 & i2, its normal is i1's + i2's norm
-        Vertices.Add((Vertices[i1] + Vertices[i2]) * 0.5F);
+        _vertices.Add((_vertices[i1] + _vertices[i2]) * 0.5F);
         _normals.Add((_normals[i1] + _normals[i2]).normalized);
         return newIndex;
     }

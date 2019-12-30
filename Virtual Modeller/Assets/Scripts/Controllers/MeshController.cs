@@ -37,7 +37,7 @@ public class MeshController : Singleton<MeshController> {
 	void Awake(){
 		Debug.Log("Initialize MeshController");
 		_deformationType = DeformationType.PUSH;
-		_deformationForce = 0.05F;
+		_deformationForce = 0.01F;
 		_collisionAccuracy = 4;
 		AttachMesh(this.gameObject);
 		_model.Subdivide();
