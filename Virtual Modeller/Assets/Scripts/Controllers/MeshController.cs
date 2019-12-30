@@ -47,16 +47,17 @@ public class MeshController : Singleton<MeshController> {
 	*	Called when collision occurs between this gameObject and another
 	*	Only occurs when isKinematic is enabled for a gameObject's rigidBody
 	*/
-	void OnCollisionEnter(Collision collision){
+	public void OnCollisionEnter(Collision collision){
 		// Check each of model's vertex (Global position) against
 		// collision point (Global position), deform mesh if they are about the same
 		// TODO: mesh deformation optimization (checking of mesh vertex against contact point)
 		ContactPoint[] contactPoints = collision.contacts;
 		for (int i = 0; i < _model.Vertices.Count; i++){
 			Vector3 globalPoint = transform.TransformPoint(_model.Vertices[i]);
-			foreach (ContactPoint contact in contactPoints){
-				if (_SameGlobalPoint(contact.point, globalPoint)){
-					_model.Vertices[i] = _Deform(globalPoint, contact.normal);
+			for (int j = 0; j < contactPoints.Length; j++){
+				if (SameGlobalPoint(contactPoints[j].point, globalPoint)){
+					_model.Vertices[i] = transform.InverseTransformPoint(
+						Deform(globalPoint, contactPoints[j].normal));
 				}
 			}
 		}
@@ -64,12 +65,12 @@ public class MeshController : Singleton<MeshController> {
 		_model.UpdateCollider();
 	}
 	
-	private Vector3 _Deform(Vector3 point, Vector3 normal){
+	public Vector3 Deform(Vector3 point, Vector3 normal){
 		// transform global position to mesh's local position
 		if(_deformationType == DeformationType.PUSH)
-			return transform.InverseTransformPoint(point + _GetCollisionNormal(normal));
+			return point + _GetCollisionNormal(normal);
 		else
-			return transform.InverseTransformPoint(point - _GetCollisionNormal(normal));
+			return point - _GetCollisionNormal(normal);
 	}
 
 	// returns deformation intensity depending on DEFORMATION_FORCE
@@ -77,7 +78,7 @@ public class MeshController : Singleton<MeshController> {
 		return collisionNormal * _deformationForce;
 	}
 
-	private static bool _SameGlobalPoint(Vector3 v1, Vector3 v2){
+	public static bool SameGlobalPoint(Vector3 v1, Vector3 v2){
 		return !(Mathf.Abs(v1.x - v2.x) > _collisionAccuracy ||
 			     Mathf.Abs(v1.y - v2.y) > _collisionAccuracy ||
 			     Mathf.Abs(v1.z - v2.z) > _collisionAccuracy);
