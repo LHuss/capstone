@@ -24,14 +24,46 @@ public class CameraController : Singleton<CameraController> {
 	protected String mouseYAxisInput = "Mouse Y";
 	protected String mouseScrollWheelInput = "Mouse ScrollWheel";
 	
-	protected KeyCode disableCamera = KeyCode.LeftShift;
+	protected KeyCode disableCameraMovement = KeyCode.LeftShift;
+
+	protected Quaternion startingAngle;
+	protected Transform transformCamera;
+	protected Transform transformParent;
 
 	void Awake(){
-		Debug.Log("Initiating camera controls");
+		Debug.Log("Initiating camera controls");		
+		Debug.Log("Starting rotation position: " + this.rotationVect.x + ", " + this.rotationVect.y);
 	}	
 	
 	public void ToggleMvmtRestriction(){
 		isMovementRestricted=!isMovementRestricted;
+	}
+
+	public Transform TransformCamera {
+		get {
+			return this.transformCamera;
+		}
+		set {
+			this.transformCamera = value;
+		}
+	}
+
+	public Transform TransformParent {
+		get {
+			return this.transformParent;
+		}
+		set {
+			this.transformParent = value;
+		}
+	}
+
+	public Quaternion StartingAngle {
+		get {
+			return this.startingAngle;
+		}
+		set {
+			this.startingAngle = value;
+		}
 	}
 
 	public float OrbitSensitivity {
@@ -70,6 +102,15 @@ public class CameraController : Singleton<CameraController> {
 		}
 	}
 
+	public Vector3 RotationVect {
+		get {
+			return this.rotationVect;
+		}
+		set {
+			this.rotationVect = value;
+		}
+	}
+
 	public bool IsMovementRestricted {
 		get {
 			return this.isMovementRestricted;
@@ -88,68 +129,62 @@ public class CameraController : Singleton<CameraController> {
 		}
 	}
 
-	public void OrbitCamera(float xmovement, float ymovement){
-		rotationVect.x += xmovement * orbitSensitivity;
-		rotationVect.y -= ymovement * orbitSensitivity;
+	public Tuple<float, float, float> ResetCamera(){
+		this.transformParent.rotation = Quaternion.Lerp(this.transformParent.rotation, this.startingAngle, Time.time*this.rotationSpeed);
+		this.transformParent.position = new Vector3(0,0,0);
+		this.rotationVect.x = 0;
+		this.rotationVect.y = 0;
+		this.cameraDistance = 10f;
+		return new Tuple<float, float, float>(this.rotationVect.x, this.rotationVect.y, this.cameraDistance);
+	}
 
-		if(rotationVect.y < rotationMinAngle){
-			rotationVect.y = rotationMinAngle;
+	public Tuple<float, float> OrbitCamera(float xmovement, float ymovement){
+		this.rotationVect.x += xmovement * this.orbitSensitivity;
+		this.rotationVect.y -= ymovement * this.orbitSensitivity;
+
+		if(this.rotationVect.y < rotationMinAngle){
+			this.rotationVect.y = rotationMinAngle;
 		}
-		if(rotationVect.y > rotationMaxAngle){
-			rotationVect.y = rotationMaxAngle;
+		if(this.rotationVect.y > rotationMaxAngle){
+			this.rotationVect.y = rotationMaxAngle;
 		}
+		return new Tuple<float, float>(this.rotationVect.x, this.rotationVect.y);
 	}
 
 	public float ZoomCamera(float msw){
-		float scrollDepth = msw * zoomSensitivity;
+		float scrollDepth = msw * this.zoomSensitivity;
 
 		scrollDepth = scrollDepth * this.cameraDistance * 0.25f;
 
 		this.cameraDistance += scrollDepth * -1f;
 
-		if(cameraDistance < cameraMinDistance){
-			cameraDistance = cameraMinDistance;
+		if(this.cameraDistance < this.cameraMinDistance){
+			this.cameraDistance = this.cameraMinDistance;
 		}
-		if(cameraDistance > cameraMaxDistance){
-			cameraDistance = cameraMaxDistance;
+		if(this.cameraDistance > this.cameraMaxDistance){
+			this.cameraDistance = this.cameraMaxDistance;
 		}
 		return scrollDepth;
 	}
 
-	public void HandleCamera(Transform tc, Transform tp){
+	public void HandleCamera(){
 
-		Vector3 pos = tc.position;
-
-		if(Input.GetKeyDown(disableCamera)){
+		if(Input.GetKeyDown(disableCameraMovement)){
 			ToggleMvmtRestriction();
 		}
 
 		if(!isMovementRestricted){
 
+			float mouseScrollInputAmount = Input.GetAxis(mouseScrollWheelInput);
 			float mouseXInputAmount = Input.GetAxis(mouseXAxisInput);
 			float mouseYInputAmount = Input.GetAxis(mouseYAxisInput);
-			float mouseScrollInputAmount = Input.GetAxis(mouseScrollWheelInput);
-			float kbPan = Input.GetAxis("Horizontal") * panSensitivity * Time.deltaTime * 20f;
-
-			// Orbit camera using mouse
+			
+			// Orbit using mouse
 			if(mouseXInputAmount!=0 || mouseYInputAmount!=0){
-				OrbitCamera(mouseXInputAmount, mouseYInputAmount);				
+				OrbitCamera(mouseXInputAmount, mouseYInputAmount);
 			}
 
-			// Zoom camera using mouse wheel
-			if(mouseScrollInputAmount!=0f){
-				Debug.Log("Zooming by " + ZoomCamera(mouseScrollInputAmount) + " units.");		
-			}
-
-			// Pan left and right using keyboard
-			if(Input.GetKey("a")){
-				Debug.Log("Panning left..");
-				Vector3 strafeLeft = new Vector3(kbPan, 0f, 0f);
-				tp.position = strafeLeft;					
-
-			}
-
-			// Orbit camera using keyboard
+			// Orbit using keyboard
 			if(Input.GetKey("left")){ 
 				OrbitCamera(Time.deltaTime*this.orbitSensitivity*5f, 0f);
 			}
@@ -163,23 +198,55 @@ public class CameraController : Singleton<CameraController> {
 				OrbitCamera(0f, Time.deltaTime*this.orbitSensitivity*5f);
 			}
 
+			// Zoom camera using mouse wheel
+			if(mouseScrollInputAmount!=0f){
+				Debug.Log("Zooming by " + ZoomCamera(mouseScrollInputAmount) + " units.");		
+			}
+
+			// Pan left or right using keyboard
+			if(Input.GetKey("a")){
+				Debug.Log("Panning left..");
+				this.transformParent.Translate(Vector3.left * this.panSensitivity * Time.deltaTime, Space.Self);
+			}
+			if(Input.GetKey("d")){
+				Debug.Log("Panning right..");
+				this.transformParent.Translate(Vector3.right * this.panSensitivity * Time.deltaTime, Space.Self);
+			}
+
 			// Zoom camera using keyboard
-			if(Input.GetKey("-")){ // zoom out with -
-				Debug.Log("Zooming by " + ZoomCamera(Time.deltaTime*this.zoomSensitivity) + " units.");
+			if(Input.GetKey("-")){ // zoom out with -				
+				float zoomDist = Time.deltaTime*this.zoomSensitivity;
+				Debug.Log(this.cameraDistance);
+				Debug.Log("Zooming by " + ZoomCamera(zoomDist) + " units.");
+				Debug.Log(this.cameraDistance);
 			}
 			if(Input.GetKey("=")){ // zoom in with +
-				Debug.Log("Zooming by " + ZoomCamera(Time.deltaTime*this.zoomSensitivity*-1) + " units.");
+				float zoomDist = Time.deltaTime*this.zoomSensitivity*-1;
+				Debug.Log(this.cameraDistance);
+				Debug.Log("Zooming by " + ZoomCamera(zoomDist) + " units.");
+				Debug.Log(this.cameraDistance);
 			}
+
+			// Reset camera
+			if(Input.GetKey("r")){
+				Debug.Log("Resetting camera angle");
+				ResetCamera();
+			}
+
+			// Prints the current camera position into the console
+			if(Input.GetKey("p")){
+				Debug.Log("Getting current camera position...");
+				Debug.Log(this.transformCamera.position);
+			}
+
+			// rotation
+			Quaternion q = Quaternion.Euler(rotationVect.y, rotationVect.x, 0);
+			this.transformParent.rotation = Quaternion.Lerp(this.transformParent.rotation, q, Time.deltaTime*this.rotationSpeed);
+
+			//zoom		
+			this.transformCamera.localPosition = new Vector3(0f, 0f, Mathf.Lerp(this.transformCamera.localPosition.z, this.cameraDistance*-1f, Time.deltaTime * this.mouseScrollDampening));		
 			
 		}
-
-		Quaternion q = Quaternion.Euler(rotationVect.y, rotationVect.x, 0);
-
-		//rotation
-		tp.rotation = Quaternion.Lerp(tp.rotation, q, Time.deltaTime*rotationSpeed);
-
-		//zoom		
-		tc.localPosition = new Vector3(0f, 0f, Mathf.Lerp(tc.localPosition.z, this.cameraDistance*-1f, Time.deltaTime * this.mouseScrollDampening));
 	
 	}
 
