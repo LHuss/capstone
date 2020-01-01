@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.IO;
-using UnityEngine;
+﻿using UnityEngine;
 using SFB; // StandaloneFileBrowser
 using AsImpL;
 
@@ -10,23 +6,20 @@ public class ImportObj : MonoBehaviour {
 
 	private string[] path;
 	private string filePath = "";
-
-	public void OpenFile()
+    
+	public void OpenFile ()
     {
-
 		ExtensionFilter[] extensionList = new [] {
                 new ExtensionFilter("Waveform obj", "obj")
             };
 		path = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, false);
 		FileResult(path);
-
 		if (filePath.Length!=0){
 			ImportObjFromFile(filePath);
 		}
 		else{
 			Debug.Log("Obj file not selected");
 		}
-		
 	}
 
 	public void ImportObjFromFile (string fp)
@@ -46,7 +39,8 @@ public class ImportObj : MonoBehaviour {
         };
 	}
 
-	public void FileResult (string[] p) {
+	public void FileResult (string[] p)
+    {
         if (p.Length == 0) {
         	Debug.Log("file path len = 0");
         }
