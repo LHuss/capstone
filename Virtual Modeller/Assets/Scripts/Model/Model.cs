@@ -91,3 +91,4 @@ public class Model : MonoBehaviour{
         _normals.Add((_normals[i1] + _normals[i2]).normalized);
         return newIndex;
     }
+}
