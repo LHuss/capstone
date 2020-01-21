@@ -7,6 +7,7 @@ public class MeshController : Singleton<MeshController> {
 	private DeformationType _deformationType;
 	private static float _collisionAccuracy;
 	private static float _deformationForce;
+	private static Stack _previousStates;
 
 
 	public Model Model {
@@ -39,6 +40,7 @@ public class MeshController : Singleton<MeshController> {
 		_deformationType = DeformationType.PUSH;
 		_deformationForce = 0.01F;
 		_collisionAccuracy = 0.04F;
+		_previousStates = new Stack();
 		AttachMesh(this.gameObject);
 		_model.Subdivide();
 	}
@@ -48,6 +50,8 @@ public class MeshController : Singleton<MeshController> {
 	*	Only occurs when isKinematic is enabled for a gameObject's rigidBody
 	*/
 	public void OnCollisionEnter(Collision collision){
+		// Save previous state to allow undo
+		_SavePreviousState(_model);
 		// Check each of model's vertex (Global position) against
 		// collision point (Global position), deform mesh if they are about the same
 		// TODO: mesh deformation optimization (checking of mesh vertex against contact point)
@@ -76,6 +80,11 @@ public class MeshController : Singleton<MeshController> {
 	// returns deformation intensity depending on DEFORMATION_FORCE
 	private Vector3 _GetCollisionNormal(Vector3 collisionNormal){
 		return collisionNormal * _deformationForce;
+	}
+
+	// returns deformation intensity depending on DEFORMATION_FORCE
+	private void _SavePreviousState(Model model){
+		_previousStates.Push(model);
 	}
 
 	public static bool SameGlobalPoint(Vector3 v1, Vector3 v2){
