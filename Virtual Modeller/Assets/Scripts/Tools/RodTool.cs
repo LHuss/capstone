@@ -7,7 +7,7 @@ public class RodTool : Tool {
 		Debug.Log("Creating Rod Tool");
 		type = ToolType.TOOL_ROD;
 		tool = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-		localScale = new Vector3(0.2f, 0.5f, 0.2f);
-		UpdateGameObject();
+		localScale = new Vector3(0.01f, 0.025f, 0.01f);
+		SetupTool();
 	}
 }

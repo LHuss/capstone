@@ -7,7 +7,7 @@ public class CubeTool : Tool {
 		Debug.Log("Creating Cube Tool");
 		type = ToolType.TOOL_CUBE;
 		tool = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		localScale = new Vector3(1.0f, 1.0f, 1.0f);
-		UpdateGameObject();
+		localScale = new Vector3(0.05f, 0.05f, 0.05f);
+		SetupTool();
 	}
 }
