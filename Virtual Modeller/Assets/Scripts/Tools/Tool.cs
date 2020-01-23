@@ -82,18 +82,12 @@ public abstract class Tool : MonoBehaviour {
                 .Query()
                 .Where(controller => controller.isTracked).FirstOrDefault();
         if (!!intController) {
-            Debug.Log(intController.position);
             ToolController.Instance.ToolPosition = intController.position;
         }
-		
     }
 
     protected void UpdateGameObject() {
         tool.transform.position = ToolController.Instance.ToolPosition;
         tool.transform.localScale = localScale * ToolController.Instance.Size;
-    }
-
-    private void OnCollisionEnter(Collision other) {
-        Debug.Log("Wat");
     }
 }
