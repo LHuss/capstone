@@ -2,55 +2,60 @@
 using SFB; // StandaloneFileBrowser
 using AsImpL;
 
-public class ImportObj : MonoBehaviour {
+public class ImportObj : MonoBehaviour
+{
 
-	private string[] path;
-	private string filePath = "";
-    
-	public void OpenFile ()
+    private string[] path;
+    private string filePath = "";
+
+    public void OpenFile()
     {
-		ExtensionFilter[] extensionList = new [] {
+        ExtensionFilter[] extensionList = new[] {
                 new ExtensionFilter("Waveform obj", "obj")
             };
-		path = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, false);
-		FileResult(path);
-		if (filePath.Length!=0){
-			ImportObjFromFile(filePath);
-		}
-		else{
-			Debug.Log("Obj file not selected");
-		}
-	}
+        path = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, false);
+        FileResult(path);
+        if (filePath.Length != 0)
+        {
+            ImportObjFromFile(filePath);
+        }
+        else
+        {
+            Debug.Log("Obj file not selected");
+        }
+    }
 
-	public void ImportObjFromFile (string fp)
+    public void ImportObjFromFile(string fp)
     {
-		Camera cam = Camera.main;
+        Camera cam = Camera.main;
         ImportOptions importOptions = new ImportOptions();
-		importOptions.buildColliders = true;
-		importOptions.modelScaling = 2f;
+        importOptions.buildColliders = true;
+        importOptions.modelScaling = 2f;
         gameObject.AddComponent<ObjectImporter>();
         ObjectImporter objImporter = gameObject.GetComponent<ObjectImporter>();
-		objImporter.ImportModelAsync("My Object", filePath, null, importOptions);
+        objImporter.ImportModelAsync("My Object", filePath, null, importOptions);
         objImporter.ImportedModel += (GameObject importedObject, string path) =>
         {
             //manipulate the asynchronously imported object
             AttachComponents(importedObject);
             PositionObject(importedObject);
         };
-	}
+    }
 
-	public void FileResult (string[] p)
+    public void FileResult(string[] p)
     {
-        if (p.Length == 0) {
-        	Debug.Log("file path len = 0");
+        if (p.Length == 0)
+        {
+            Debug.Log("file path len = 0");
         }
-        else{
-        	filePath = p[0];
-        	Debug.Log(filePath);
+        else
+        {
+            filePath = p[0];
+            Debug.Log(filePath);
         }
     }
 
-    public void AttachComponents (GameObject importedObject)
+    public void AttachComponents(GameObject importedObject)
     {
         importedObject.AddComponent<MeshFilter>();
         importedObject.AddComponent<MeshCollider>();
@@ -64,7 +69,7 @@ public class ImportObj : MonoBehaviour {
         rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
     }
 
-    public void PositionObject (GameObject importedObject)
+    public void PositionObject(GameObject importedObject)
     {
         importedObject.transform.localScale = new Vector3(10f, 10f, 10f);
         importedObject.transform.Translate(350f, 200f, 0f);

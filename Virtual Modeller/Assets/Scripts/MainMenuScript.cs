@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class MainMenu : MonoBehaviour
+public class MainMenuScript : MonoBehaviour
 {
     private MainMenuController mainMenuController;
     public GameObject loginMenu;
