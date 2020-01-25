@@ -14,7 +14,15 @@ public class Model : MonoBehaviour{
 	public List<Vector3> Normals { get {return _normals; } private set{} }
 	public List<int> Triangles { get {return _triangles; } private set{} }
 
-    
+
+    // copy constructor    
+    Model(float scale, List<Vector3> _vertices, List<Vector3> _normals, List<int> _triangles){
+        this.scale = scale;
+        this._vertices = new List<Vector3>(_vertices);
+        this._normals = new List<Vector3>(_normals);
+        this._triangles = new List<int>(_triangles);
+    }
+
     /*
 	*	Assign Mesh filter to class variable to reduce mem-alloc each time
 	*	a collision occurs

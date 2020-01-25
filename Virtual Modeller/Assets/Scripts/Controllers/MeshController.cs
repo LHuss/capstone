@@ -7,7 +7,8 @@ public class MeshController : Singleton<MeshController> {
 	private DeformationType _deformationType;
 	private static float _collisionAccuracy;
 	private static float _deformationForce;
-	private static Stack _previousStates;
+	private static Stack<Model> _previousStates;
+	private static Stack<Model> _nextStates;
 
 
 	public Model Model {
@@ -40,9 +41,21 @@ public class MeshController : Singleton<MeshController> {
 		_deformationType = DeformationType.PUSH;
 		_deformationForce = 0.01F;
 		_collisionAccuracy = 0.04F;
-		_previousStates = new Stack();
+		_previousStates = new Stack<Model>();
+		_nextStates = new Stack<Model>();
 		AttachMesh(this.gameObject);
 		_model.Subdivide();
+	}
+
+	void Update(){
+        if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)){
+			if(Input.GetKey(KeyCode.Z)){
+				Undo();
+			}
+			if(Input.GetKey(KeyCode.Y)){ 
+				Redo();
+			}
+		}
 	}
 
 	/*
@@ -50,8 +63,9 @@ public class MeshController : Singleton<MeshController> {
 	*	Only occurs when isKinematic is enabled for a gameObject's rigidBody
 	*/
 	public void OnCollisionEnter(Collision collision){
-		// Save previous state to allow undo
-		_SavePreviousState(_model);
+		// Save previous state to allow undo, clear the nextStates to prevent illegal redo
+		_previousStates.Push(_model.Clone());
+		_nextStates.Clear();
 		// Check each of model's vertex (Global position) against
 		// collision point (Global position), deform mesh if they are about the same
 		// TODO: mesh deformation optimization (checking of mesh vertex against contact point)
@@ -82,9 +96,26 @@ public class MeshController : Singleton<MeshController> {
 		return collisionNormal * _deformationForce;
 	}
 
-	// returns deformation intensity depending on DEFORMATION_FORCE
-	private void _SavePreviousState(Model model){
-		_previousStates.Push(model);
+	// undo the last modification performed on the model
+	public void Undo(){
+		if(_previousStates.Count != 0){
+			Debug.Log("Undo performed.");
+			_nextStates.Push(_model.Clone());
+			_model = _previousStates.Pop();
+			_model.UpdateMesh();
+			_model.UpdateCollider();
+		}
+	}
+
+	// redo the last undo
+	public void Redo(){
+		if(_nextStates.Count != 0){
+			Debug.Log("Redo performed.");
+			_previousStates.Push(_model.Clone());
+			_model = _nextStates.Pop();
+			_model.UpdateMesh();
+			_model.UpdateCollider();
+		}
 	}
 
 	public static bool SameGlobalPoint(Vector3 v1, Vector3 v2){
