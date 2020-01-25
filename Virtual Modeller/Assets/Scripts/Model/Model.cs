@@ -37,6 +37,11 @@ public class Model : MonoBehaviour{
 		Debug.Log("Initialized Model");
 	}
 
+    // Clone and return new model
+    public Model Clone(){
+        return new Model(this.scale, this._vertices, this._normals, this._triangles);
+    }
+
     public void Subdivide()
     {
         Debug.Log("Pre-subdivision vertex count: " + _vertices.Count);
