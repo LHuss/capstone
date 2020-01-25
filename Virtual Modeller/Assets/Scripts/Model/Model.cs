@@ -4,24 +4,10 @@ using UnityEngine;
 
 public class Model : MonoBehaviour{
 	private static MeshFilter _meshFilter;
-	private float scale;
-	private List<Vector3> _vertices;
-	private List<Vector3> _normals;
-    private List<int> _triangles;
-
-	public float Scale { get; set; }
-    public List<Vector3> Vertices { get { return _vertices; } private set{} }
-	public List<Vector3> Normals { get {return _normals; } private set{} }
-	public List<int> Triangles { get {return _triangles; } private set{} }
-
-
-    // copy constructor    
-    Model(float scale, List<Vector3> _vertices, List<Vector3> _normals, List<int> _triangles){
-        this.scale = scale;
-        this._vertices = new List<Vector3>(_vertices);
-        this._normals = new List<Vector3>(_normals);
-        this._triangles = new List<int>(_triangles);
-    }
+	public float scale;
+	public List<Vector3> vertices;
+	public List<Vector3> normals;
+    public List<int> triangles;
 
     /*
 	*	Assign Mesh filter to class variable to reduce mem-alloc each time
@@ -29,32 +15,27 @@ public class Model : MonoBehaviour{
 	*/
 	public void Awake(){
 		_meshFilter = GetComponent<MeshFilter>();
-        _vertices = new List<Vector3>(_meshFilter.mesh.vertices);
-        _normals = new List<Vector3>(_meshFilter.mesh.normals);
-        _triangles = new List<int>(_meshFilter.mesh.triangles);
+        vertices = new List<Vector3>(_meshFilter.mesh.vertices);
+        normals = new List<Vector3>(_meshFilter.mesh.normals);
+        triangles = new List<int>(_meshFilter.mesh.triangles);
         UpdateMesh();
 		UpdateCollider();
 		Debug.Log("Initialized Model");
 	}
 
-    // Clone and return new model
-    public Model Clone(){
-        return new Model(this.scale, this._vertices, this._normals, this._triangles);
-    }
-
     public void Subdivide()
     {
-        Debug.Log("Pre-subdivision vertex count: " + _vertices.Count);
+        Debug.Log("Pre-subdivision vertex count: " + vertices.Count);
         // Dictionary containing newly generated vertices, used to check if vertex already exists
         Dictionary<uint,int> newVertices = new Dictionary<uint,int>();
 
         List<int> newTriangles = new List<int>();
 
-        for (int i = 0; i < _triangles.Count; i+=3)
+        for (int i = 0; i < triangles.Count; i+=3)
         {
-            int i1 = _triangles[i];
-            int i2 = _triangles[i+1];
-            int i3 = _triangles[i+2];
+            int i1 = triangles[i];
+            int i2 = triangles[i+1];
+            int i3 = triangles[i+2];
 
             int a = _GetNewVertex(i1, i2, newVertices);
             int b = _GetNewVertex(i2, i3, newVertices);
@@ -65,19 +46,19 @@ public class Model : MonoBehaviour{
             newTriangles.Add(i3);   newTriangles.Add(c);   newTriangles.Add(b); // right triangle
             newTriangles.Add(a);   newTriangles.Add(b);   newTriangles.Add(c);  // center triangle
         }
-        _triangles = newTriangles;
+        triangles = newTriangles;
         UpdateMesh();
         UpdateCollider();
-        Debug.Log("Post-subdivision vertex count: " + _vertices.Count);
+        Debug.Log("Post-subdivision vertex count: " + vertices.Count);
 
         // Based on Bunny83's answer https://bit.ly/33khaNj
     }
 
 	// reassign computed vertices to mesh vertices (update mesh for rendering)
 	public void UpdateMesh(){
-        _meshFilter.mesh.vertices = _vertices.ToArray();
-        _meshFilter.mesh.normals = _normals.ToArray();
-        _meshFilter.mesh.triangles = _triangles.ToArray();
+        _meshFilter.mesh.vertices = vertices.ToArray();
+        _meshFilter.mesh.normals = normals.ToArray();
+        _meshFilter.mesh.triangles = triangles.ToArray();
 	}
 	
 	// reassign computed mesh to mesh collider (update mesh for collision)
@@ -85,6 +66,16 @@ public class Model : MonoBehaviour{
 		GetComponent<MeshCollider>().sharedMesh = null;
 		GetComponent<MeshCollider>().sharedMesh = _meshFilter.mesh;
 	}
+
+    // return an object array representation of the current state
+    public object[] GetCurrentStateRepresentation(){
+        object[] currentState = new object[4];
+        currentState[0] = this.scale;
+        currentState[1] = new List<Vector3>(this.vertices);
+        currentState[2] = new List<Vector3>(this.normals);
+        currentState[3] = new List<int>(this.triangles);
+        return currentState;
+    }
 
     private int _GetNewVertex(int i1, int i2, Dictionary<uint, int> newVectices)
     {
@@ -97,11 +88,11 @@ public class Model : MonoBehaviour{
             return newVectices[t1];
 
         // generate vertex:
-        int newIndex = _vertices.Count;
+        int newIndex = vertices.Count;
         newVectices.Add(t1, newIndex);
         // Add vertex between i1 & i2, its normal is i1's + i2's norm
-        _vertices.Add((_vertices[i1] + _vertices[i2]) * 0.5F);
-        _normals.Add((_normals[i1] + _normals[i2]).normalized);
+        vertices.Add((vertices[i1] + vertices[i2]) * 0.5F);
+        normals.Add((normals[i1] + normals[i2]).normalized);
         return newIndex;
     }
 }

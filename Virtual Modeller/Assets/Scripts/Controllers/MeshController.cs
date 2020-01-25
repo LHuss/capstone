@@ -7,8 +7,8 @@ public class MeshController : Singleton<MeshController> {
 	private DeformationType _deformationType;
 	private static float _collisionAccuracy;
 	private static float _deformationForce;
-	private static Stack<Model> _previousStates;
-	private static Stack<Model> _nextStates;
+	private static Stack<object[]> _previousStates;
+	private static Stack<object[]> _nextStates;
 
 
 	public Model Model {
@@ -41,8 +41,8 @@ public class MeshController : Singleton<MeshController> {
 		_deformationType = DeformationType.PUSH;
 		_deformationForce = 0.01F;
 		_collisionAccuracy = 0.04F;
-		_previousStates = new Stack<Model>();
-		_nextStates = new Stack<Model>();
+		_previousStates = new Stack<object[]>();
+		_nextStates = new Stack<object[]>();
 		AttachMesh(this.gameObject);
 		_model.Subdivide();
 	}
@@ -64,17 +64,17 @@ public class MeshController : Singleton<MeshController> {
 	*/
 	public void OnCollisionEnter(Collision collision){
 		// Save previous state to allow undo, clear the nextStates to prevent illegal redo
-		_previousStates.Push(_model.Clone());
+		_previousStates.Push(_model.GetCurrentStateRepresentation());
 		_nextStates.Clear();
 		// Check each of model's vertex (Global position) against
 		// collision point (Global position), deform mesh if they are about the same
 		// TODO: mesh deformation optimization (checking of mesh vertex against contact point)
 		ContactPoint[] contactPoints = collision.contacts;
-		for (int i = 0; i < _model.Vertices.Count; i++){
-			Vector3 globalPoint = transform.TransformPoint(_model.Vertices[i]);
+		for (int i = 0; i < _model.vertices.Count; i++){
+			Vector3 globalPoint = transform.TransformPoint(_model.vertices[i]);
 			for (int j = 0; j < contactPoints.Length; j++){
 				if (SameGlobalPoint(contactPoints[j].point, globalPoint)){
-					_model.Vertices[i] = transform.InverseTransformPoint(
+					_model.vertices[i] = transform.InverseTransformPoint(
 						Deform(globalPoint, contactPoints[j].normal));
 				}
 			}
@@ -100,8 +100,8 @@ public class MeshController : Singleton<MeshController> {
 	public void Undo(){
 		if(_previousStates.Count != 0){
 			Debug.Log("Undo performed.");
-			_nextStates.Push(_model.Clone());
-			_model = _previousStates.Pop();
+			_nextStates.Push(_model.GetCurrentStateRepresentation());
+			AssignStateToModel(_previousStates.Pop());
 			_model.UpdateMesh();
 			_model.UpdateCollider();
 		}
@@ -111,11 +111,18 @@ public class MeshController : Singleton<MeshController> {
 	public void Redo(){
 		if(_nextStates.Count != 0){
 			Debug.Log("Redo performed.");
-			_previousStates.Push(_model.Clone());
-			_model = _nextStates.Pop();
+			_previousStates.Push(_model.GetCurrentStateRepresentation());
+			AssignStateToModel(_nextStates.Pop());
 			_model.UpdateMesh();
 			_model.UpdateCollider();
 		}
+	}
+
+	private void AssignStateToModel(object[] state){
+		_model.scale = (float) state[0];
+		_model.vertices = (List<Vector3>) state[1];
+		_model.normals = (List<Vector3>) state[2];
+		_model.triangles = (List<int>) state[3];
 	}
 
 	public static bool SameGlobalPoint(Vector3 v1, Vector3 v2){
