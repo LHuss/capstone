@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MeshController : Singleton<MeshController> {
-	private static Model _model;
 	private DeformationType _deformationType;
 	private static float _collisionAccuracy;
 	private static float _deformationForce;
+	private static int STATE_SAVE_RATE = 120; // Around 2 seconds at 60fps
+	private static int MAXIMUM_STATES_COUNT = 50;
+	private static Model _model;
 	private static LinkedList<object[]> _states;
 	private static LinkedListNode<object[]> _currentState;
+	private static int _stateTimer;
 
 
 	public Model Model {
@@ -41,21 +44,25 @@ public class MeshController : Singleton<MeshController> {
 		_deformationType = DeformationType.PUSH;
 		_deformationForce = 0.01F;
 		_collisionAccuracy = 0.04F;
+		_stateTimer = STATE_SAVE_RATE;
 		AttachMesh(this.gameObject);
 		_model.Subdivide();
 		_states = new LinkedList<object[]>();
-		_states.AddFirst(_model.GetCurrentStateRepresentation());
+		_states.AddLast(_model.GetCurrentStateRepresentation());
 		_currentState = _states.First;
 	}
 
 	void Update(){
         if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)){
-			if(Input.GetKey(KeyCode.Z)){
+			if(Input.GetKeyDown(KeyCode.Z)){
 				Undo();
 			}
-			if(Input.GetKey(KeyCode.Y)){ 
+			if(Input.GetKeyDown(KeyCode.Y)){ 
 				Redo();
 			}
+		}
+		if(_stateTimer > 0){
+			_stateTimer--;
 		}
 	}
 
@@ -81,12 +88,16 @@ public class MeshController : Singleton<MeshController> {
 		while(_states.Last != _currentState){
 			_states.RemoveLast();
 		}
-		// add current state to the list of states
-		_states.AddLast(_model.GetCurrentStateRepresentation());
-		_currentState = _states.Last;
-		// Cap the maximum allowed states to 50 (to minimize memory usage)
-		if(_states.Count > 1000){
-			_states.RemoveFirst();
+		// If stateTimer reaches 0, save the current state
+		if (_stateTimer == 0){
+			_states.AddLast(_model.GetCurrentStateRepresentation());
+			_currentState = _states.Last;
+			// Cap the maximum allowed states to 50 (to minimize memory usage)
+			Debug.Log("Count of saved model states: " + _states.Count);
+			if(_states.Count > MAXIMUM_STATES_COUNT){
+				_states.RemoveFirst();
+			}
+			_stateTimer = STATE_SAVE_RATE;
 		}
 		_model.UpdateMesh();
 		_model.UpdateCollider();
