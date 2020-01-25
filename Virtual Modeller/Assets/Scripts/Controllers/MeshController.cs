@@ -7,8 +7,8 @@ public class MeshController : Singleton<MeshController> {
 	private DeformationType _deformationType;
 	private static float _collisionAccuracy;
 	private static float _deformationForce;
-	private static Stack<object[]> _previousStates;
-	private static Stack<object[]> _nextStates;
+	private static LinkedList<object[]> _states;
+	private static LinkedListNode<object[]> _currentState;
 
 
 	public Model Model {
@@ -41,10 +41,11 @@ public class MeshController : Singleton<MeshController> {
 		_deformationType = DeformationType.PUSH;
 		_deformationForce = 0.01F;
 		_collisionAccuracy = 0.04F;
-		_previousStates = new Stack<object[]>();
-		_nextStates = new Stack<object[]>();
 		AttachMesh(this.gameObject);
 		_model.Subdivide();
+		_states = new LinkedList<object[]>();
+		_states.AddFirst(_model.GetCurrentStateRepresentation());
+		_currentState = _states.First;
 	}
 
 	void Update(){
@@ -63,9 +64,6 @@ public class MeshController : Singleton<MeshController> {
 	*	Only occurs when isKinematic is enabled for a gameObject's rigidBody
 	*/
 	public void OnCollisionEnter(Collision collision){
-		// Save previous state to allow undo, clear the nextStates to prevent illegal redo
-		_previousStates.Push(_model.GetCurrentStateRepresentation());
-		_nextStates.Clear();
 		// Check each of model's vertex (Global position) against
 		// collision point (Global position), deform mesh if they are about the same
 		// TODO: mesh deformation optimization (checking of mesh vertex against contact point)
@@ -78,6 +76,17 @@ public class MeshController : Singleton<MeshController> {
 						Deform(globalPoint, contactPoints[j].normal));
 				}
 			}
+		}
+		// clear the future states to prevent illegal redo
+		while(_states.Last != _currentState){
+			_states.RemoveLast();
+		}
+		// add current state to the list of states
+		_states.AddLast(_model.GetCurrentStateRepresentation());
+		_currentState = _states.Last;
+		// Cap the maximum allowed states to 50 (to minimize memory usage)
+		if(_states.Count > 1000){
+			_states.RemoveFirst();
 		}
 		_model.UpdateMesh();
 		_model.UpdateCollider();
@@ -98,10 +107,10 @@ public class MeshController : Singleton<MeshController> {
 
 	// undo the last modification performed on the model
 	public void Undo(){
-		if(_previousStates.Count != 0){
+		if(_currentState.Previous != null && _currentState.Previous != _states.Last){
 			Debug.Log("Undo performed.");
-			_nextStates.Push(_model.GetCurrentStateRepresentation());
-			AssignStateToModel(_previousStates.Pop());
+			AssignStateToModel(_currentState.Previous.Value);
+			_currentState = _currentState.Previous;
 			_model.UpdateMesh();
 			_model.UpdateCollider();
 		}
@@ -109,10 +118,10 @@ public class MeshController : Singleton<MeshController> {
 
 	// redo the last undo
 	public void Redo(){
-		if(_nextStates.Count != 0){
+		if(_currentState.Next != null && _currentState.Next != _states.First){
 			Debug.Log("Redo performed.");
-			_previousStates.Push(_model.GetCurrentStateRepresentation());
-			AssignStateToModel(_nextStates.Pop());
+			AssignStateToModel(_currentState.Next.Value);
+			_currentState = _currentState.Next;
 			_model.UpdateMesh();
 			_model.UpdateCollider();
 		}
