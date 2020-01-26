@@ -5,19 +5,24 @@ public class CameraController : Singleton<CameraController> {
 
 	protected Vector3 rotationVect;
 
-	protected float cameraDistance = 10f;
+	readonly float DEFAULT_CAMERA_DISTANCE = 1f;
+	readonly Vector3 DEFAULT_POSITION = new Vector3(0, 1.4f , -0.2f);
+	readonly float DEFAULT_ROTATION_X = 0;
+	readonly float DEFAULT_ROTATION_Y = 0;
 
-	protected float orbitSensitivity = 4f;
-	protected float zoomSensitivity = 2f;
+	protected float cameraDistance = 1f;
+
+	protected float orbitSensitivity = 7.5f;
+	protected float zoomSensitivity = 5f;
 	protected float panSensitivity = 5f;
 	protected float mouseScrollDampening = 6f;
 	protected float rotationSpeed = 8f;
 	
 	protected bool isMovementRestricted = false;
 
-	protected float rotationMinAngle = 0f;
+	protected float rotationMinAngle = -30f;
 	protected float rotationMaxAngle = 90f;
-	protected float cameraMinDistance = 2f;
+	protected float cameraMinDistance = 0.1f;
 	protected float cameraMaxDistance = 100f;
 
 	protected String mouseXAxisInput = "Mouse X";
@@ -131,10 +136,11 @@ public class CameraController : Singleton<CameraController> {
 
 	public Tuple<float, float, float> ResetCamera(){
 		this.transformParent.rotation = Quaternion.Lerp(this.transformParent.rotation, this.startingAngle, Time.time*this.rotationSpeed);
-		this.transformParent.position = new Vector3(0,0,0);
-		this.rotationVect.x = 0;
-		this.rotationVect.y = 0;
-		this.cameraDistance = 10f;
+		this.transformParent.position = DEFAULT_POSITION;
+		this.rotationVect.x = DEFAULT_ROTATION_X;
+		this.rotationVect.y = DEFAULT_ROTATION_Y;
+		this.cameraDistance = DEFAULT_CAMERA_DISTANCE;
+		Debug.Log(transformCamera.position);
 		return new Tuple<float, float, float>(this.rotationVect.x, this.rotationVect.y, this.cameraDistance);
 	}
 
@@ -207,10 +213,12 @@ public class CameraController : Singleton<CameraController> {
 			if(Input.GetKey("a")){
 				Debug.Log("Panning left..");
 				this.transformParent.Translate(Vector3.left * this.panSensitivity * Time.deltaTime, Space.Self);
+				Debug.Log(transformCamera.position);
 			}
 			if(Input.GetKey("d")){
 				Debug.Log("Panning right..");
 				this.transformParent.Translate(Vector3.right * this.panSensitivity * Time.deltaTime, Space.Self);
+				Debug.Log(transformCamera.position);
 			}
 
 			// Zoom camera using keyboard
