@@ -15,11 +15,9 @@ public class Model : MonoBehaviour{
 	*/
 	public void Awake(){
 		_meshFilter = GetComponent<MeshFilter>();
-        vertices = new List<Vector3>(_meshFilter.mesh.vertices);
-        normals = new List<Vector3>(_meshFilter.mesh.normals);
-        triangles = new List<int>(_meshFilter.mesh.triangles);
-        UpdateMesh();
-		UpdateCollider();
+        vertices = new List<Vector3>(_meshFilter.sharedMesh.vertices);
+        normals = new List<Vector3>(_meshFilter.sharedMesh.normals);
+        triangles = new List<int>(_meshFilter.sharedMesh.triangles);
 		Debug.Log("Initialized Model");
 	}
 
@@ -47,8 +45,6 @@ public class Model : MonoBehaviour{
             newTriangles.Add(a);   newTriangles.Add(b);   newTriangles.Add(c);  // center triangle
         }
         triangles = newTriangles;
-        UpdateMesh();
-        UpdateCollider();
         Debug.Log("Post-subdivision vertex count: " + vertices.Count);
 
         // Based on Bunny83's answer https://bit.ly/33khaNj

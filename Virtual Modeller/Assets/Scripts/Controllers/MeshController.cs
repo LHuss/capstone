@@ -12,6 +12,7 @@ public class MeshController : Singleton<MeshController> {
 	private static LinkedList<object[]> _states;
 	private static LinkedListNode<object[]> _currentState;
 	private static int _stateTimer;
+	private static bool isNewState = false;
 
 
 	public Model Model {
@@ -47,6 +48,8 @@ public class MeshController : Singleton<MeshController> {
 		_stateTimer = STATE_SAVE_RATE;
 		AttachMesh(this.gameObject);
 		_model.Subdivide();
+		_model.UpdateMesh();
+		_model.UpdateCollider();
 		_states = new LinkedList<object[]>();
 		_states.AddLast(_model.GetCurrentStateRepresentation());
 		_currentState = _states.First;
@@ -63,6 +66,16 @@ public class MeshController : Singleton<MeshController> {
 		}
 		if(_stateTimer > 0){
 			_stateTimer--;
+		}
+		else if (_stateTimer == 0 && isNewState){
+			_states.AddLast(_model.GetCurrentStateRepresentation());
+			_currentState = _states.Last;
+			Debug.Log("Count of saved model states: " + _states.Count);
+			if(_states.Count > MAXIMUM_STATES_COUNT){
+				_states.RemoveFirst();
+			}
+			_stateTimer = STATE_SAVE_RATE;
+			isNewState = false;
 		}
 	}
 
@@ -84,23 +97,13 @@ public class MeshController : Singleton<MeshController> {
 				}
 			}
 		}
+		_model.UpdateMesh();
+		_model.UpdateCollider();
 		// clear the future states to prevent illegal redo
 		while(_states.Last != _currentState){
 			_states.RemoveLast();
 		}
-		// If stateTimer reaches 0, save the current state
-		if (_stateTimer == 0){
-			_states.AddLast(_model.GetCurrentStateRepresentation());
-			_currentState = _states.Last;
-			// Cap the maximum allowed states to 50 (to minimize memory usage)
-			Debug.Log("Count of saved model states: " + _states.Count);
-			if(_states.Count > MAXIMUM_STATES_COUNT){
-				_states.RemoveFirst();
-			}
-			_stateTimer = STATE_SAVE_RATE;
-		}
-		_model.UpdateMesh();
-		_model.UpdateCollider();
+		isNewState = true;
 	}
 	
 	public Vector3 Deform(Vector3 point, Vector3 normal){
@@ -120,10 +123,8 @@ public class MeshController : Singleton<MeshController> {
 	public void Undo(){
 		if(_currentState.Previous != null && _currentState.Previous != _states.Last){
 			Debug.Log("Undo performed.");
-			AssignStateToModel(_currentState.Previous.Value);
 			_currentState = _currentState.Previous;
-			_model.UpdateMesh();
-			_model.UpdateCollider();
+			AssignStateToModel(_currentState.Value);
 		}
 	}
 
@@ -131,10 +132,8 @@ public class MeshController : Singleton<MeshController> {
 	public void Redo(){
 		if(_currentState.Next != null && _currentState.Next != _states.First){
 			Debug.Log("Redo performed.");
-			AssignStateToModel(_currentState.Next.Value);
 			_currentState = _currentState.Next;
-			_model.UpdateMesh();
-			_model.UpdateCollider();
+			AssignStateToModel(_currentState.Value);
 		}
 	}
 
@@ -143,6 +142,8 @@ public class MeshController : Singleton<MeshController> {
 		_model.vertices = (List<Vector3>) state[1];
 		_model.normals = (List<Vector3>) state[2];
 		_model.triangles = (List<int>) state[3];
+		_model.UpdateMesh();
+		_model.UpdateCollider();
 	}
 
 	public static bool SameGlobalPoint(Vector3 v1, Vector3 v2){
