@@ -68,10 +68,6 @@ public class MeshController : Singleton<MeshController> {
 			_stateTimer--;
 		}
 		else if (_stateTimer == 0 && isNewState){
-			// clear the future states to prevent illegal redo
-			while(_states.Last != _currentState){
-				_states.RemoveLast();
-			}
 			_states.AddLast(_model.GetCurrentStateRepresentation());
 			_currentState = _states.Last;
 			Debug.Log("Count of saved model states: " + _states.Count);
@@ -103,6 +99,10 @@ public class MeshController : Singleton<MeshController> {
 		}
 		_model.UpdateMesh();
 		_model.UpdateCollider();
+		// clear the future states to prevent illegal redo
+		while(_states.Last != _currentState){
+			_states.RemoveLast();
+		}
 		isNewState = true;
 	}
 	
