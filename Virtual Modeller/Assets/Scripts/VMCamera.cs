@@ -11,9 +11,11 @@ public class VMCamera : MonoBehaviour {
 
 	void Start(){
 		Debug.Log("Assigning main camera");
+
+		GameObject camera = GameObject.Find("Main Camera");
 			
-		this.transformCamera = this.transform;
-		this.transformParent = this.transform.parent;
+		this.transformCamera = camera.transform;
+		this.transformParent = camera.transform.parent;
 		//this.startingPosition = new Vector3(transformCamera.position.x, transformCamera.position.y, transformCamera.position.z);
 		this.startingAngle = transformParent.rotation;
 		Debug.Log(transformCamera.position);
