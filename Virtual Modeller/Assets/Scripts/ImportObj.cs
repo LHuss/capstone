@@ -30,7 +30,7 @@ public class ImportObj : MonoBehaviour
         Camera cam = Camera.main;
         ImportOptions importOptions = new ImportOptions();
         importOptions.buildColliders = true;
-        importOptions.modelScaling = 2f;
+        importOptions.modelScaling = 1f;
         gameObject.AddComponent<ObjectImporter>();
         ObjectImporter objImporter = gameObject.GetComponent<ObjectImporter>();
         objImporter.ImportModelAsync("My Object", filePath, null, importOptions);
@@ -72,7 +72,7 @@ public class ImportObj : MonoBehaviour
     public void PositionObject(GameObject importedObject)
     {
         importedObject.transform.localScale = new Vector3(10f, 10f, 10f);
-        importedObject.transform.Translate(350f, 200f, 0f);
+        importedObject.transform.Translate(0f, 0f, 0f);
     }
 
 }
