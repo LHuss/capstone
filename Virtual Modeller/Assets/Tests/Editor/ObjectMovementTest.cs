@@ -15,7 +15,7 @@ public class ObjectMovementTest {
 			float mockXMovement = -0.05f;
 			float mockYMovement = 0f;
 			var mockMovementResult = MovementController.Instance.RotateObject(mockXMovement, mockYMovement);
-			Tuple<float, float> expectedResult = new Tuple<float, float>(-0.8f, 0f);
+			Tuple<float, float> expectedResult = new Tuple<float, float>(-0.4f, 0f);
 			Assert.AreEqual(expectedResult, mockMovementResult);
 		} catch(Exception ex) {
 			Debug.Log(ex);
@@ -32,7 +32,7 @@ public class ObjectMovementTest {
 			var mockMovementResult = MovementController.Instance.RotateObject(mockXMovement, mockYMovement);
 			Tuple<float, float> expectedResult = new Tuple<float, float>(100f, 0f);
 			Assert.AreEqual(expectedResult, mockMovementResult);
-		} catch(Exception ex) {
+		} catch(AssertionException ex) {
 			Debug.Log("This test was supposed to fail, working as intended.\n" + ex);
 		}
 	}
@@ -45,7 +45,7 @@ public class ObjectMovementTest {
 			sphere.AddComponent<ObjectMovement>();
 			float mockZoomMovement = -0.15f;
 			MovementController.Instance.ZoomObject(mockZoomMovement);
-			float expectedResult = 1.88237512f;
+			float expectedResult = 0.185000002f;
 			Assert.AreEqual(expectedResult, MovementController.Instance.ObjectDistance);
 		} catch(Exception ex) {
 			Debug.Log(ex);
@@ -62,7 +62,7 @@ public class ObjectMovementTest {
 			MovementController.Instance.ZoomObject(mockZoomMovement);
 			float expectedResult = 12.34f;
 			Assert.AreEqual(expectedResult, MovementController.Instance.ObjectDistance);
-		} catch(Exception ex) {
+		} catch(AssertionException ex) {
 			Debug.Log("This test was supposed to fail, working as intended.\n" + ex);
 		}
 	}
@@ -83,7 +83,5 @@ public class ObjectMovementTest {
 			Debug.Log(ex);
 		}
 	}
-
-
 
 }
