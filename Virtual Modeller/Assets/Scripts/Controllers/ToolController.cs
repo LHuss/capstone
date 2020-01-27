@@ -58,15 +58,22 @@ public class ToolController : Singleton<ToolController> {
 	}
 
 	public void ForceUpdate() {
+		UpdateToolPosition();
 		UpdateActive();
 	}
 
 	private void Awake () {
 		Debug.Log("Setting initial tool position to that of the camera + cameraLookAt");
-		Vector3 cameraLookAt = Camera.main.gameObject.transform.forward * 5;
-		toolPosition = Camera.main.gameObject.transform.position + cameraLookAt;
+		UpdateToolPosition();
 		tools = new Dictionary<ToolType, Tool>();
 		size = 1f;
+	}
+	
+	private void UpdateToolPosition() {
+		if (activeToolType != ToolType.TOOL_HAND) {
+			Vector3 cameraLookAt = Camera.main.gameObject.transform.forward * 5;
+			toolPosition = Camera.main.gameObject.transform.position + cameraLookAt;
+		}	
 	}
 
 	private void UpdateActive() {

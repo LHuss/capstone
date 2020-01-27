@@ -56,7 +56,7 @@ namespace Leap.Unity.Interaction {
     [OnEditorChange("hoverEnabled")]
     private bool _hoverEnabled = true;
     public bool hoverEnabled {
-      get { return _hoverEnabled; }
+      get { return _hoverEnabled || ToolController.Instance.ActiveToolType != ToolType.TOOL_HAND; }
       set {
         _hoverEnabled = value;
 
@@ -72,7 +72,7 @@ namespace Leap.Unity.Interaction {
     [OnEditorChange("contactEnabled")]
     private bool _contactEnabled = true;
     public bool contactEnabled {
-      get { return _contactEnabled; }
+      get { return _contactEnabled && ToolController.Instance.ActiveToolType == ToolType.TOOL_HAND; }
       set {
         _contactEnabled = value;
 
