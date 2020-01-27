@@ -63,6 +63,7 @@ public class ImportObj : MonoBehaviour
         MeshCollider objMeshCollider = importedObject.GetComponent<MeshCollider>();
         importedObject.AddComponent<Model>();
         importedObject.AddComponent<Rigidbody>();
+        importedObject.AddComponent<ObjectMovement>();
         Rigidbody rigidbody = importedObject.GetComponent<Rigidbody>();
         rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ;
         rigidbody.isKinematic = true;
