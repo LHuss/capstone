@@ -3,8 +3,6 @@ using System;
 
 public class MovementController : Singleton<MovementController> {
 
-	protected Vector3 rotationVect;
-
 	readonly float DEFAULT_ROTATION_X = 0;
 	readonly float DEFAULT_ROTATION_Y = 0;
 	readonly float DEFAULT_ROTATION_Z = 0;
@@ -13,13 +11,12 @@ public class MovementController : Singleton<MovementController> {
 	readonly String mouseYAxisInput = "Mouse Y";
 	readonly KeyCode disableObjectMovement = KeyCode.LeftShift;
 
-	protected float cameraDistance = 5f;
-
-	protected float panSensitivity = 5f;
-	protected float rotationSpeed = 8f;
+	readonly float panSensitivity = 5f;
+	readonly float rotationSpeed = 8f;
 	
 	protected bool isMovementRestricted = false;	
 
+	protected Vector3 rotationVect;
 	protected Quaternion startingAngle;
 	protected Transform transformObject;
 	protected Transform transformParent;
@@ -115,11 +112,6 @@ public class MovementController : Singleton<MovementController> {
 		return new Tuple<float, float>(this.rotationVect.x, this.rotationVect.y);
 	}
 
-	public Vector3 TranslateObject(Vector3 direction){
-		this.transformObject.Translate(direction * 5f * Time.deltaTime, Space.World);
-		return transformObject.position;
-	}
-
 	public void HandleObject(){
 
 		if(Input.GetKeyDown(disableObjectMovement)){
@@ -156,12 +148,12 @@ public class MovementController : Singleton<MovementController> {
 			// Pan left or right using keyboard
 			if(Input.GetKey("a")){
 				Debug.Log("Panning left..");
-				TranslateObject(Vector3.left);
+				this.transformObject.Translate(Vector3.left * this.panSensitivity * Time.deltaTime, Space.World);
 				Debug.Log(transformObject.position);
 			}
 			if(Input.GetKey("d")){
 				Debug.Log("Panning right..");
-				TranslateObject(Vector3.right);
+				this.transformObject.Translate(Vector3.right * this.panSensitivity * Time.deltaTime, Space.World);
 				Debug.Log(transformObject.position);
 			}
 

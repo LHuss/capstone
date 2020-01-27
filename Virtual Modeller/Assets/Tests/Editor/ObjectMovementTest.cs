@@ -36,5 +36,5 @@ public class ObjectMovementTest {
 			Debug.Log("This test was supposed to fail, working as intended.\n" + ex);
 		}
 	}
-	
+
 }

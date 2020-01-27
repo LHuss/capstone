@@ -3,26 +3,24 @@ using System;
 
 public class CameraController : Singleton<CameraController> {
 
-	protected Vector3 rotationVect;
+	readonly float rotationMinAngle = -30f;
+	readonly float rotationMaxAngle = 90f;
+	readonly float cameraMinDistance = 0.001f;
+	readonly float cameraMaxDistance = 100f;
+
+	readonly String mouseScrollWheelInput = "Mouse ScrollWheel";	
+	readonly KeyCode disableCameraMovement = KeyCode.LeftShift;
+
+	readonly float orbitSensitivity = 7.5f;
+	readonly float zoomSensitivity = 5f;
+	readonly float panSensitivity = 5f;
+	readonly float mouseScrollDampening = 6f;	
 
 	protected float cameraDistance = 1f;
 
-	protected float orbitSensitivity = 7.5f;
-	protected float zoomSensitivity = 5f;
-	protected float panSensitivity = 5f;
-	protected float mouseScrollDampening = 6f;
-	
 	protected bool isMovementRestricted = false;
 
-	protected float rotationMinAngle = -30f;
-	protected float rotationMaxAngle = 90f;
-	protected float cameraMinDistance = 0.001f;
-	protected float cameraMaxDistance = 100f;
-
-	protected String mouseScrollWheelInput = "Mouse ScrollWheel";
-	
-	protected KeyCode disableCameraMovement = KeyCode.LeftShift;
-
+	protected Vector3 rotationVect;
 	protected Quaternion startingAngle;
 	protected Transform transformCamera;
 	protected Transform transformParent;
