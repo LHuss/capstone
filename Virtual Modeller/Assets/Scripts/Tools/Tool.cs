@@ -12,7 +12,7 @@ public abstract class Tool : MonoBehaviour {
 
     protected float toolSpeed = 10.0f;
 
-    protected bool IsActive {
+    public bool IsActive {
         get {
             return type == ToolController.Instance.ActiveToolType;
         }
