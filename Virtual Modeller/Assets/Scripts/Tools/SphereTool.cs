@@ -7,6 +7,7 @@ public class SphereTool : Tool {
 		Debug.Log("Creating Sphere Tool");
 		type = ToolType.TOOL_SPHERE;
 		tool = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		tool.GetComponent<SphereCollider>().radius *= 0.3f;
 		localScale = new Vector3(0.05f, 0.05f, 0.05f);
 		SetupTool();
 	}
