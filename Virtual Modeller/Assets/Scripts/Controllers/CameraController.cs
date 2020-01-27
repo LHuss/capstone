@@ -74,26 +74,17 @@ public class CameraController : Singleton<CameraController> {
 		get {
 			return this.orbitSensitivity;
 		}
-		set {
-			this.orbitSensitivity = value;
-		}
 	}
 
 	public float ZoomSensitivity {
 		get {
 			return this.zoomSensitivity;
 		}
-		set {
-			this.zoomSensitivity = value;
-		}
 	}
 
 	public float MouseScrollDampening {
 		get {
 			return this.mouseScrollDampening;
-		}
-		set {
-			this.mouseScrollDampening = value;
 		}
 	}
 

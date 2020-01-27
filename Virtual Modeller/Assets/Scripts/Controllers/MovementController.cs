@@ -67,12 +67,15 @@ public class MovementController : Singleton<MovementController> {
 		}
 	}
 
+	public float PanSensitivity {
+		get {
+			return this.panSensitivity;
+		}
+	}
+
 	public float RotationSpeed {
 		get {
 			return this.rotationSpeed;
-		}
-		set {
-			this.rotationSpeed = value;
 		}
 	}
 
