@@ -15,7 +15,7 @@ public class ObjectMovementTest {
 			float mockXMovement = -0.05f;
 			float mockYMovement = 0f;
 			var mockMovementResult = MovementController.Instance.RotateObject(mockXMovement, mockYMovement);
-			Tuple<float, float> expectedResult = new Tuple<float, float>(-0.4f, 0f);
+			Tuple<float, float> expectedResult = new Tuple<float, float>(-0.8f, 0f);
 			Assert.AreEqual(expectedResult, mockMovementResult);
 		} catch(Exception ex) {
 			Debug.Log(ex);
@@ -36,5 +36,54 @@ public class ObjectMovementTest {
 			Debug.Log("This test was supposed to fail, working as intended.\n" + ex);
 		}
 	}
+
+
+	[Test]
+	public void ZoomPass() {
+		try{
+			GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			sphere.AddComponent<ObjectMovement>();
+			float mockZoomMovement = -0.15f;
+			MovementController.Instance.ZoomObject(mockZoomMovement);
+			float expectedResult = 1.88237512f;
+			Assert.AreEqual(expectedResult, MovementController.Instance.ObjectDistance);
+		} catch(Exception ex) {
+			Debug.Log(ex);
+		}
+	}
+
+
+	[Test]
+	public void ZoomFail() {
+		try{
+			GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			sphere.AddComponent<ObjectMovement>();
+			float mockZoomMovement = -0.15f;
+			MovementController.Instance.ZoomObject(mockZoomMovement);
+			float expectedResult = 12.34f;
+			Assert.AreEqual(expectedResult, MovementController.Instance.ObjectDistance);
+		} catch(Exception ex) {
+			Debug.Log("This test was supposed to fail, working as intended.\n" + ex);
+		}
+	}
+
+
+	[Test]
+	public void ResetPass() {
+		try{
+			GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			sphere.AddComponent<ObjectMovement>();
+			Debug.Log(MovementController.Instance.StartingPosition);
+			float mockZoom = 20f;
+			MovementController.Instance.ZoomObject(mockZoom);
+			MovementController.Instance.ResetPosition();
+			Vector3 expectedResult = new Vector3(0f,0f,0f);
+			Assert.AreEqual(expectedResult, MovementController.Instance.TransformObject.position);
+		} catch(Exception ex) {
+			Debug.Log(ex);
+		}
+	}
+
+
 
 }
