@@ -18,3 +18,6 @@ Concordia Capstone Project 2019
 1. Build the project:\
 `File > Build And Run`
 2. Launch the built project
+
+## License and Liability
+See [the wiki](https://github.com/LHuss/capstone/wiki/License-and-Liability)
