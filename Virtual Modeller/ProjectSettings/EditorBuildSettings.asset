@@ -12,5 +12,5 @@ EditorBuildSettings:
     path: Assets/Scenes/ObjImporterScene.unity
     guid: c8fd50a199bd0184ea85f6ee451cbeb9
   - enabled: 1
-    path: Assets/Scenes/New Project.unity
+    path: Assets/Scenes/CreationScene.unity
     guid: 21884ff6af7ff504a9a896d4c4690c1f
