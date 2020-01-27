@@ -7,7 +7,6 @@ public class VMCamera : MonoBehaviour {
 	protected Transform transformCamera;
 	protected Transform transformParent;
 	protected Vector3 startingPosition;
-	protected Quaternion startingAngle;
 
 	void Start(){
 		Debug.Log("Assigning main camera");
@@ -16,16 +15,15 @@ public class VMCamera : MonoBehaviour {
 			
 		this.transformCamera = camera.transform;
 		this.transformParent = camera.transform.parent;
-		//this.startingPosition = new Vector3(transformCamera.position.x, transformCamera.position.y, transformCamera.position.z);
-		this.startingAngle = transformParent.rotation;
-		Debug.Log(transformCamera.position);
-		Debug.Log(transformCamera.localPosition);
-		CameraController.Instance.StartingAngle = this.startingAngle;
+		this.startingPosition = new Vector3(transformCamera.position.x, transformCamera.position.y, transformCamera.position.z);
+		Debug.Log("camera position: " + transformCamera.position);
+		//Debug.Log("camera localposition: " + transformCamera.localPosition);
+		CameraController.Instance.StartingPosition = this.startingPosition;
 		CameraController.Instance.TransformCamera = this.transformCamera;
 		CameraController.Instance.TransformParent = this.transformParent;
 	}
 
-	void LateUpdate(){
+	void Update(){
 		CameraController.Instance.HandleCamera();		
 	}
 
