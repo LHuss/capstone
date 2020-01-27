@@ -14,6 +14,7 @@ public class ImportObj : MonoBehaviour
                 new ExtensionFilter("Waveform obj", "obj")
             };
         path = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, false);
+        Debug.Log(path);
         FileResult(path);
         if (filePath.Length != 0)
         {
