@@ -15,7 +15,7 @@ public class ObjectMovement : MonoBehaviour {
 		this.transformObject = this.transform;
 		this.transformParent = this.transform.parent;
 		this.startingPosition = new Vector3(transformObject.position.x, transformObject.position.y, transformObject.position.z);
-		this.startingAngle = transformParent.rotation;
+		this.startingAngle = transformObject.rotation;
 		Debug.Log("Starting position: "+ this.startingPosition);
 		//Debug.Log(transformObject.localPosition);
 		MovementController.Instance.StartingAngle = this.startingAngle;
