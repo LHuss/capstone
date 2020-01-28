@@ -33,8 +33,6 @@ public class ExportObj : MonoBehaviour
                     }
                     path = path.Remove(path.Length - fileName.Length - 1);
                     fileName = fileName.Remove(fileName.Length-4,4);
-                    Debug.Log(path);
-                    Debug.Log(fileName);
                     SaveModels(fileName, path);
                     return;
                 }
