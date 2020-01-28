@@ -11,7 +11,7 @@ public class ModelTest {
         sphere.AddComponent<MeshCollider>();
 
         meshController.AttachMesh(sphere);
-        meshController.Model.Awake();
+        meshController.Model.Start();
         var preSubVertexCount = meshController.Model.vertices.Count;
         meshController.Model.Subdivide();
         var postSubVertexCount = meshController.Model.vertices.Count;
@@ -28,7 +28,7 @@ public class ModelTest {
         cube.AddComponent<MeshCollider>();
 
         meshController.AttachMesh(cube);
-        meshController.Model.Awake();
+        meshController.Model.Start();
         var preSubVertexCount = meshController.Model.vertices.Count;
         meshController.Model.Subdivide();
         var postSubVertexCount = meshController.Model.vertices.Count;

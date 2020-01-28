@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Model : MonoBehaviour{
-	private static MeshFilter _meshFilter;
-	public float scale;
+public class Model : MonoBehaviour{	public float scale;
 	public List<Vector3> vertices;
 	public List<Vector3> normals;
     public List<int> triangles;
@@ -13,11 +11,10 @@ public class Model : MonoBehaviour{
 	*	Assign Mesh filter to class variable to reduce mem-alloc each time
 	*	a collision occurs
 	*/
-	public void Awake(){
-		_meshFilter = GetComponent<MeshFilter>();
-        vertices = new List<Vector3>(_meshFilter.sharedMesh.vertices);
-        normals = new List<Vector3>(_meshFilter.sharedMesh.normals);
-        triangles = new List<int>(_meshFilter.sharedMesh.triangles);
+	public void Start(){
+        vertices = new List<Vector3>(GetComponent<MeshFilter>().sharedMesh.vertices);
+        normals = new List<Vector3>(GetComponent<MeshFilter>().sharedMesh.normals);
+        triangles = new List<int>(GetComponent<MeshFilter>().sharedMesh.triangles);
 		Debug.Log("Initialized Model");
 	}
 
@@ -52,15 +49,17 @@ public class Model : MonoBehaviour{
 
 	// reassign computed vertices to mesh vertices (update mesh for rendering)
 	public void UpdateMesh(){
-        _meshFilter.mesh.vertices = vertices.ToArray();
-        _meshFilter.mesh.normals = normals.ToArray();
-        _meshFilter.mesh.triangles = triangles.ToArray();
+        Debug.Log("RERENDER");
+        GetComponent<MeshFilter>().mesh.vertices = vertices.ToArray();
+        GetComponent<MeshFilter>().mesh.normals = normals.ToArray();
+        GetComponent<MeshFilter>().mesh.triangles = triangles.ToArray();        
 	}
 	
 	// reassign computed mesh to mesh collider (update mesh for collision)
 	public void UpdateCollider(){
+        Debug.Log("UPDATE COLLIDER");
 		GetComponent<MeshCollider>().sharedMesh = null;
-		GetComponent<MeshCollider>().sharedMesh = _meshFilter.mesh;
+		GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh;
 	}
 
     // return an object array representation of the current state
