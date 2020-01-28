@@ -20,7 +20,9 @@ namespace Leap.Unity{
     }
 
   	protected override void HandReset() {
-      gameObject.SetActive(true);
+      if(ToolController.Instance.ActiveToolType == ToolType.TOOL_HAND) {
+        gameObject.SetActive(true);
+      }
     }
 
     protected override void HandFinish() {
