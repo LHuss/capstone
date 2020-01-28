@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using SFB; // StandaloneFileBrowser
 using AsImpL;
+using Leap.Unity.Interaction;
 
 public class ImportObj : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class ImportObj : MonoBehaviour
                 new ExtensionFilter("Waveform obj", "obj")
             };
         path = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, false);
+        Debug.Log(path);
         FileResult(path);
         if (filePath.Length != 0)
         {
@@ -29,7 +31,6 @@ public class ImportObj : MonoBehaviour
     {
         Camera cam = Camera.main;
         ImportOptions importOptions = new ImportOptions();
-        importOptions.buildColliders = true;
         importOptions.modelScaling = 1f;
         gameObject.AddComponent<ObjectImporter>();
         ObjectImporter objImporter = gameObject.GetComponent<ObjectImporter>();
@@ -57,12 +58,12 @@ public class ImportObj : MonoBehaviour
 
     public void AttachComponents(GameObject importedObject)
     {
-        importedObject.AddComponent<MeshFilter>();
-        importedObject.AddComponent<MeshCollider>();
-        MeshCollider objMeshCollider = importedObject.GetComponent<MeshCollider>();
-        importedObject.AddComponent<Model>();
-        importedObject.AddComponent<Rigidbody>();
-        Rigidbody rigidbody = importedObject.GetComponent<Rigidbody>();
+        GameObject Go = importedObject.transform.GetChild(0).gameObject;
+        Go.AddComponent<MeshCollider>();
+        Go.AddComponent<MeshController>();
+        Go.AddComponent<ObjectMovement>();
+        Go.AddComponent<InteractionBehaviour>();
+        Rigidbody rigidbody = Go.GetComponent<Rigidbody>();
         rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ;
         rigidbody.isKinematic = true;
         rigidbody.detectCollisions = true;
@@ -71,7 +72,7 @@ public class ImportObj : MonoBehaviour
 
     public void PositionObject(GameObject importedObject)
     {
-        importedObject.transform.localScale = new Vector3(10f, 10f, 10f);
+        importedObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         importedObject.transform.Translate(0f, 0f, 0f);
     }
 

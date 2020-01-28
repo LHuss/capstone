@@ -7,12 +7,8 @@ public class SphereTool : Tool {
 		Debug.Log("Creating Sphere Tool");
 		type = ToolType.TOOL_SPHERE;
 		tool = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		localScale = new Vector3(1.0f, 1.0f, 1.0f);
-		UpdateGameObject();
-	}
-
-	protected override void UpdateTool() {
-		// Do nothing
-		Debug.Log("Updating Sphere. Should not move.");
+		tool.GetComponent<SphereCollider>().radius *= 0.3f;
+		localScale = new Vector3(0.05f, 0.05f, 0.05f);
+		SetupTool();
 	}
 }

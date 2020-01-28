@@ -5,43 +5,54 @@ using NUnit.Framework;
 using System.Collections;
 
 public class ImportObjTests {
+    private GameObject SetupGameObject() {
+        GameObject parent = new GameObject();
+        GameObject child = new GameObject();
+        child.transform.parent = parent.transform;
+
+        return parent;
+    }
 
 	[UnityTest]
-	public IEnumerator _Check_Imported_Object_Has_MeshFilter_Component() {
+	public IEnumerator _Check_Imported_Object_Has_MeshController_Component() {
         var importObj = new GameObject().AddComponent<ImportObj>();
-        GameObject go = new GameObject();
+        GameObject imported = SetupGameObject();
 		yield return null;
-        importObj.AttachComponents(go);
-        Assert.NotNull(go.GetComponent<MeshFilter>());
+        importObj.AttachComponents(imported);
+        GameObject go = imported.transform.GetChild(0).gameObject;
+        Assert.NotNull(go.GetComponent<MeshController>());
     }
 
     [UnityTest]
     public IEnumerator _Check_Imported_Object_Has_MeshCollider_Component()
     {
         var importObj = new GameObject().AddComponent<ImportObj>();
-        GameObject go = new GameObject();
-        yield return null;
-        importObj.AttachComponents(go);
+        GameObject imported = SetupGameObject();
+		yield return null;
+        importObj.AttachComponents(imported);
+        GameObject go = imported.transform.GetChild(0).gameObject;
         Assert.NotNull(go.GetComponent<MeshCollider>());
     }
 
     [UnityTest]
-    public IEnumerator _Check_Imported_Object_Has_Model_Component()
+    public IEnumerator _Check_Imported_Object_Has_ObjectMovement_Component()
     {
         var importObj = new GameObject().AddComponent<ImportObj>();
-        GameObject go = new GameObject();
-        yield return null;
-        importObj.AttachComponents(go);
-        Assert.NotNull(go.GetComponent<Model>());
+        GameObject imported = SetupGameObject();
+		yield return null;
+        importObj.AttachComponents(imported);
+        GameObject go = imported.transform.GetChild(0).gameObject;
+        Assert.NotNull(go.GetComponent<ObjectMovement>());
     }
 
     [UnityTest]
     public IEnumerator _Check_Imported_Object_Has_Rigibody_Component()
     {
         var importObj = new GameObject().AddComponent<ImportObj>();
-        GameObject go = new GameObject();
-        yield return null;
-        importObj.AttachComponents(go);
+        GameObject imported = SetupGameObject();
+		yield return null;
+        importObj.AttachComponents(imported);
+        GameObject go = imported.transform.GetChild(0).gameObject;
         Assert.NotNull(go.GetComponent<Rigidbody>());
     }
 
@@ -49,11 +60,11 @@ public class ImportObjTests {
     public IEnumerator _Check_Imported_Object_Collision_Detection_ON()
     {
         var importObj = new GameObject().AddComponent<ImportObj>();
-        GameObject go = new GameObject();
-        yield return null;
-        importObj.AttachComponents(go);
+        GameObject imported = SetupGameObject();
+		yield return null;
+        importObj.AttachComponents(imported);
+        GameObject go = imported.transform.GetChild(0).gameObject;
         Rigidbody rb = go.GetComponent<Rigidbody>();
-        Assert.Equals(true,rb.detectCollisions);
+        Assert.AreEqual(true,rb.detectCollisions);
     }
-
 }
