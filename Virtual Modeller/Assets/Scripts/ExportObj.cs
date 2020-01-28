@@ -12,13 +12,35 @@ public class ExportObj : MonoBehaviour
     public void SaveFile()
     {
         MeshFilter[] filters = FindObjectsOfType<MeshFilter>();
-        Debug.Log(filters.Length);
         ExtensionFilter[] extensionList = new[] {
             new ExtensionFilter("Waveform obj", "obj")
         };
-        var path1 = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", extensionList);
-        var path = "C:\\Users\\Hicham\\Desktop\\New folder";
-        SaveModels("Test", path);
+        var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", extensionList);
+        Debug.Log(path);
+        bool flag = false;
+        Stack<string> reverseName = new Stack<string>();
+        string fileName = "";
+        for(int i = path.Length-1; i>0; i--)
+        {
+            if(!flag)
+            {
+                if (path[i].ToString().Contains("\\"))
+                {
+                    foreach (string item in reverseName)
+                    {
+
+                        fileName = fileName + item;
+                    }
+                    path = path.Remove(path.Length - fileName.Length - 1);
+                    fileName = fileName.Remove(fileName.Length-4,4);
+                    Debug.Log(path);
+                    Debug.Log(fileName);
+                    SaveModels(fileName, path);
+                    return;
+                }
+                reverseName.Push(path[i].ToString());
+            }
+        }
     }
 
     struct ObjMaterial
