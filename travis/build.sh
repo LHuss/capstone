@@ -1,7 +1,7 @@
 #! /bin/sh
 
-PROJECT_PATH=$(pwd)/$UNITY_PROJECT_PATH
-UNITY_BUILD_DIR=$(pwd)/Build
+PROJECT_PATH=$PWD/$UNITY_PROJECT_PATH
+UNITY_BUILD_DIR=$PWD/Build
 LOG_FILE=$UNITY_BUILD_DIR/unity-win.log
 
 
@@ -20,6 +20,7 @@ mkdir $UNITY_BUILD_DIR
   -projectPath "$PROJECT_PATH" \
   -buildWindows64Player  "$UNITY_BUILD_DIR/win/ci-build.exe" \
   -quit \
+  -force-free \
   | tee "$LOG_FILE"
 
 if [ $? = 0 ] ; then
