@@ -37,16 +37,18 @@ public class MeshController : Singleton<MeshController> {
 	*	Ex: Import new mesh -> assign _model as that mesh
 	*/
 	public void AttachMesh(GameObject gameObject){
-		_model = gameObject.AddComponent(typeof(Model)) as Model;
+		gameObject.AddComponent<Model>();
+		_model = gameObject.GetComponent<Model>();
 	}
 
-	void Awake(){
+	void Start(){
 		Debug.Log("Initialize MeshController");
 		_deformationType = DeformationType.PUSH;
 		_deformationForce = 0.01F;
 		_collisionAccuracy = 0.04F;
 		_stateTimer = STATE_SAVE_RATE;
 		AttachMesh(this.gameObject);
+		_model.Start();
 		_model.Subdivide();
 		_model.UpdateMesh();
 		_model.UpdateCollider();
@@ -97,8 +99,10 @@ public class MeshController : Singleton<MeshController> {
 				}
 			}
 		}
-		_model.UpdateMesh();
-		_model.UpdateCollider();
+		foreach (Model m in GetComponents<Model>()) {
+			m.UpdateMesh();
+			m.UpdateCollider();
+		}
 		// clear the future states to prevent illegal redo
 		while(_states.Last != _currentState){
 			_states.RemoveLast();
