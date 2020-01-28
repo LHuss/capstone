@@ -17,5 +17,5 @@ install:
 - ./travis/install.sh
 
 script:
-- ./travis/build.sh
 - ./travis/run-tests.sh
+- ./travis/build.sh
