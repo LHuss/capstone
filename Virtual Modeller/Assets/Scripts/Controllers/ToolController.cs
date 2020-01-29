@@ -71,8 +71,15 @@ public class ToolController : Singleton<ToolController> {
 	
 	private void UpdateToolPosition() {
 		if (activeToolType != ToolType.TOOL_HAND) {
-			Vector3 cameraLookAt = Camera.main.gameObject.transform.forward * 5;
-			toolPosition = Camera.main.gameObject.transform.position + cameraLookAt;
+			Vector3 cameraLookAt = Camera.main.gameObject.transform.forward;
+			float maxLookAtValue = Mathf.Max(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z);
+
+			// Normalize the vector by it's maximum value;
+			Vector3 boundedLookAt = cameraLookAt / maxLookAtValue; 
+
+			// Shift tool to right in front of the camera's lookAt, and a bit up and to the side 
+			Vector3 desiredLookAt = boundedLookAt * 0.1f + new Vector3(0.1f, 0.05f, 0f); 
+			toolPosition = Camera.main.gameObject.transform.position + desiredLookAt;
 		}	
 	}
 

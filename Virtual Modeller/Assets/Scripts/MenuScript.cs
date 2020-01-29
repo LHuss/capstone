@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuScript : MonoBehaviour {
+	private readonly string menuName = "ToolMenu";
+
 	public GameObject toolSettingsUI;	
 	
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.BackQuote)) {
-			if (MenuController.Instance.GameIsPaused) {
+			if (MenuController.Instance.GameIsPausedByMenu(menuName)) {
 				DeactiveMenu(toolSettingsUI);
 			} else {
 				ActivateMenu(toolSettingsUI);
@@ -18,13 +20,11 @@ public class MenuScript : MonoBehaviour {
 
 	void ActivateMenu(GameObject menu) {
 		menu.SetActive(true);
-		MenuController.Instance.Pause();
-		Debug.Log("Game Paused");
+		MenuController.Instance.Pause(menuName);
 	}
 
 	void DeactiveMenu(GameObject menu) {
 		menu.SetActive(false);
-		MenuController.Instance.Resume();
-		Debug.Log("Game Resume");
+		MenuController.Instance.TryResume(menuName);
 	}
 }
