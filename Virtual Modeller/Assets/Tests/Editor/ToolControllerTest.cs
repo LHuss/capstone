@@ -33,7 +33,11 @@ public class ToolControllerTest {
 
 		tc.ForceUpdate();
 
-		Vector3 expectedPosition = Camera.main.gameObject.transform.position + Camera.main.gameObject.transform.forward * 5;
+		Vector3 cameraLookAt = Camera.main.gameObject.transform.forward;
+		float maxLookAtValue = Mathf.Max(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z);
+		Vector3 boundedLookAt = cameraLookAt / maxLookAtValue; 
+		Vector3 desiredLookAt = boundedLookAt * 0.1f + new Vector3(0.1f, 0.05f, 0f); 
+		Vector3 expectedPosition = Camera.main.gameObject.transform.position + desiredLookAt;
 		Assert.AreEqual(expectedPosition, tc.ToolPosition);
 
 		Assert.AreEqual(ToolType.TOOL_CUBE, tc.ActiveToolType);
