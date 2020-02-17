@@ -6,6 +6,7 @@ public class Model : MonoBehaviour{	public float scale;
 	public List<Vector3> vertices;
 	public List<Vector3> normals;
     public List<int> triangles;
+    public Dictionary<string, List<int>> verticesDict;
 
     /*
 	*	Assign Mesh filter to class variable to reduce mem-alloc each time
@@ -71,6 +72,36 @@ public class Model : MonoBehaviour{	public float scale;
         currentState[3] = new List<int>(this.triangles);
         return currentState;
     }
+
+    public void ResetVerticesDict(int accuracy) {
+        verticesDict = new Dictionary<string, List<int>>();
+        for (int i=0; i < vertices.Count; i++) {
+            Vector3 worldPos = transform.TransformPoint(vertices[i]);
+
+            string key = VertexHelper.HashVertex(worldPos, accuracy);
+
+            if (!verticesDict.ContainsKey(key)) {
+                verticesDict.Add(key, new List<int>(){i});
+			}
+            else {
+                verticesDict[key].Add(i);
+            }
+        }
+    }
+
+	public void TransferKey(string oldKey, string newKey) {
+        List<int> indecesToMove = verticesDict[oldKey];
+        
+		if (verticesDict.ContainsKey(newKey)) {
+            for (int i = 0; i < indecesToMove.Count; i++) {
+                verticesDict[newKey].Add(verticesDict[oldKey][i]);
+            }
+		} else {
+            verticesDict.Add(newKey, indecesToMove);
+        }
+        
+        verticesDict.Remove(oldKey);
+	}
 
     private int _GetNewVertex(int i1, int i2, Dictionary<uint, int> newVectices)
     {
