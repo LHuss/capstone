@@ -25,6 +25,10 @@ public class ObjectMovement : MonoBehaviour {
 	}
 	
 	void Update() {
-		MovementController.Instance.HandleObject();
+		// Handle object movement using gestures if mouse movement is restricted
+		if(MovementController.Instance.IsMovementRestricted)
+			GestureController.Instance.HandleGestures();
+		else
+			MovementController.Instance.HandleObject();
 	}
 }

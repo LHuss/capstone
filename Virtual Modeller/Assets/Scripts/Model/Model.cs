@@ -49,7 +49,6 @@ public class Model : MonoBehaviour{	public float scale;
 
 	// reassign computed vertices to mesh vertices (update mesh for rendering)
 	public void UpdateMesh(){
-        Debug.Log("RERENDER");
         GetComponent<MeshFilter>().mesh.vertices = vertices.ToArray();
         GetComponent<MeshFilter>().mesh.normals = normals.ToArray();
         GetComponent<MeshFilter>().mesh.triangles = triangles.ToArray();        
@@ -57,7 +56,6 @@ public class Model : MonoBehaviour{	public float scale;
 	
 	// reassign computed mesh to mesh collider (update mesh for collision)
 	public void UpdateCollider(){
-        Debug.Log("UPDATE COLLIDER");
 		GetComponent<MeshCollider>().sharedMesh = null;
 		GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh;
 	}

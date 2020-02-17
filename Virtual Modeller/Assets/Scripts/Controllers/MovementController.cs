@@ -19,7 +19,7 @@ public class MovementController : Singleton<MovementController> {
 	readonly float panSensitivity = 2f;
 	readonly float rotationSpeed = 8f;
 	
-	protected bool isMovementRestricted = false;	
+	protected bool isMovementRestricted = true;	
 	protected float objectDistance = 0.2f;
 	protected Vector3 rotationVect;
 	protected Quaternion startingAngle;
@@ -32,8 +32,12 @@ public class MovementController : Singleton<MovementController> {
 		Debug.Log("Starting rotation position: " + this.rotationVect.x + ", " + this.rotationVect.y);
 	}	
 	
-	public void ToggleMvmtRestriction(){
-		isMovementRestricted=!isMovementRestricted;
+	public void RestrictMovement(){
+		isMovementRestricted = false;
+	}
+
+	public void UnrestrictMovement(){
+		isMovementRestricted = true;
 	}
 
 	public Transform TransformObject {
@@ -136,12 +140,13 @@ public class MovementController : Singleton<MovementController> {
 		return new Tuple<float, float>(this.transformObject.rotation.x, this.transformObject.rotation.y);
 	}
 
-	public Tuple<float, float> RotateObject(float xmovement, float ymovement){
+	public Tuple<float, float, float> RotateObject(float xmovement, float ymovement, float zmovement){
 
 		this.rotationVect.x += xmovement * this.rotationSpeed;
-		this.rotationVect.y -= ymovement * this.rotationSpeed;	
+		this.rotationVect.y -= ymovement * this.rotationSpeed;
+		this.rotationVect.z += zmovement * this.rotationSpeed;
 
-		return new Tuple<float, float>(this.rotationVect.x, this.rotationVect.y);
+		return new Tuple<float, float, float>(this.rotationVect.x, this.rotationVect.y, this.rotationVect.z);
 	}
 
 	public float ZoomObject(float msw){
@@ -164,7 +169,10 @@ public class MovementController : Singleton<MovementController> {
 	public void HandleObject(){
 
 		if(Input.GetKeyDown(disableObjectMovement)){
-			ToggleMvmtRestriction();
+			if(isMovementRestricted)
+				UnrestrictMovement();
+			else
+				RestrictMovement();
 		}
 
 		if(!isMovementRestricted){
@@ -205,7 +213,7 @@ public class MovementController : Singleton<MovementController> {
 			
 			// Rotate using mouse
 			if(mouseXInputAmount!=0 || mouseYInputAmount!=0){
-				RotateObject(mouseYInputAmount, mouseXInputAmount);
+				RotateObject(mouseYInputAmount, mouseXInputAmount, 0);
 			}
 
 			float xRot= Input.GetAxis("Vertical"); // Rotate along the Y axis
@@ -213,16 +221,16 @@ public class MovementController : Singleton<MovementController> {
 
 			// Rotate using keyboard
 			if(Input.GetKey("left")){ 
-				RotateObject(Time.deltaTime*xRot, yRot);
+				RotateObject(Time.deltaTime*xRot, yRot, 0);
 			}
 			if(Input.GetKey("right")){ 
-				RotateObject(Time.deltaTime*-xRot, yRot);
+				RotateObject(Time.deltaTime*-xRot, yRot, 0);
 			}
 			if(Input.GetKey("up")){ 
-				RotateObject(xRot, Time.deltaTime*yRot);
+				RotateObject(xRot, Time.deltaTime*yRot, 0);
 			}
 			if(Input.GetKey("down")){ 
-				RotateObject(xRot, Time.deltaTime*-yRot);
+				RotateObject(xRot, Time.deltaTime*-yRot, 0);
 			}
 
 			// Pan left or right using keyboard
@@ -251,9 +259,8 @@ public class MovementController : Singleton<MovementController> {
 				Debug.Log(this.transformObject.position);
 			}
 
-			Quaternion q = Quaternion.Euler(rotationVect.x, rotationVect.y, 0);
+			Quaternion q = Quaternion.Euler(rotationVect.x, rotationVect.y, rotationVect.z);
 			this.transformObject.rotation = Quaternion.Lerp(this.transformObject.rotation, q, Time.deltaTime*this.rotationSpeed);
-
 		}
 	
 	}
