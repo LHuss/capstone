@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using SFB; // StandaloneFileBrowser
-using UnityEditor;
 using UnityEngine;
 
 public class ExportObj : MonoBehaviour
@@ -93,7 +92,7 @@ public class ExportObj : MonoBehaviour
                 objMaterial.name = mats[material].name;
 
                 if (mats[material].mainTexture)
-                    objMaterial.textureName = EditorUtility.GetAssetPath(mats[material].mainTexture);
+                    objMaterial.textureName = null; //EditorUtility.GetAssetPath(mats[material].mainTexture);
                 else
                     objMaterial.textureName = null;
 
@@ -170,7 +169,7 @@ public class ExportObj : MonoBehaviour
         }
         catch
         {
-            EditorUtility.DisplayDialog("Error!", "Failed to create target folder!", "");
+            //EditorUtility.DisplayDialog("Error!", "Failed to create target folder!", "");
             return false;
         }
 
