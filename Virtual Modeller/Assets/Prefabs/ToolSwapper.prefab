@@ -331,8 +331,8 @@ GameObject:
   - component: {fileID: 223406291958555760}
   - component: {fileID: 114208229902514966}
   - component: {fileID: 114966782633444340}
-  - component: {fileID: 114019634228185980}
   - component: {fileID: 114149632366895362}
+  - component: {fileID: 114121703484882294}
   m_Layer: 5
   m_Name: ToolSwapper
   m_TagString: Untagged
@@ -578,18 +578,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114019634228185980
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1842825013988188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7e5a0e5bf3868245a4eab182d4058f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  toolSettingsUI: {fileID: 1325176348483750}
 --- !u!114 &114035141090420394
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -704,6 +692,18 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114121703484882294
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1842825013988188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e68bde338cbb4b4bac9be4202e0618f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menuUI: {fileID: 1842825013988188}
 --- !u!114 &114124879330704340
 MonoBehaviour:
   m_ObjectHideFlags: 1

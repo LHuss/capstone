@@ -5,12 +5,15 @@ using UnityEngine;
 public class MenuController : Singleton<MenuController> {
 	private HashSet<string> activeMenus;
 
+	private Dictionary<StaticMenuType, GameMenu> staticMenus;
+
 	public bool GameIsPausedByMenu(string menu) {
 		return activeMenus.Contains(menu);
 	}
 
 	private void Awake() {
 		activeMenus = new HashSet<string>();
+		staticMenus = new Dictionary<StaticMenuType, GameMenu>();
 	}
 
 	public void Pause(string menu) {
@@ -28,6 +31,24 @@ public class MenuController : Singleton<MenuController> {
 			Debug.Log("Game resume attempted by " + menu);
 			string activeMenuNames = "[" + string.Join(", ", activeMenus) + "]" ;
 			Debug.Log("Game still paused by following menu(s): " + activeMenuNames);
+		}
+	}
+
+	public void AddStaticMenu(StaticMenuType type, GameMenu menu) {
+		staticMenus.Add(type, menu);
+	}
+
+	public void ActivateStaticMenu(StaticMenuType menuType) {
+		GameMenu staticMenu = staticMenus[menuType];
+		if (!!staticMenu) {
+			staticMenu.ActivateMenu();
+		}
+	}
+
+	public void DeactivateStaticMenu(StaticMenuType menuType) {
+		GameMenu staticMenu = staticMenus[menuType];
+		if (!!staticMenu) {
+			staticMenu.DeactiveMenu();
 		}
 	}
 }
