@@ -56,6 +56,7 @@ public class MeshController : Singleton<MeshController> {
 		_model.UpdateMesh();
 		_model.UpdateCollider();
 		_model.ResetVerticesDict(_collisionDecimals);
+		_model.ResetIndexNeighborDict();
 		_states = new LinkedList<object[]>();
 		_states.AddLast(_model.GetCurrentStateRepresentation());
 		_currentState = _states.First;
@@ -69,6 +70,9 @@ public class MeshController : Singleton<MeshController> {
 			if(Input.GetKeyDown(KeyCode.Y)){ 
 				Redo();
 			}
+		}
+		if(Input.GetKeyDown(KeyCode.L)) {
+			_model.ApplyLaplacianFilter();
 		}
 		if(_stateTimer > 0){
 			_stateTimer--;

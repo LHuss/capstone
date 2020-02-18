@@ -7,6 +7,7 @@ public class Model : MonoBehaviour{	public float scale;
 	public List<Vector3> normals;
     public List<int> triangles;
     public Dictionary<string, List<int>> verticesDict;
+    public Dictionary<int, List<int>> indexNeighborDict;
 
     /*
 	*	Assign Mesh filter to class variable to reduce mem-alloc each time
@@ -74,6 +75,7 @@ public class Model : MonoBehaviour{	public float scale;
     }
 
     public void ResetVerticesDict(int accuracy) {
+        Debug.Log("Recomputing Vertices Dictionary");
         verticesDict = new Dictionary<string, List<int>>();
         for (int i=0; i < vertices.Count; i++) {
             Vector3 worldPos = transform.TransformPoint(vertices[i]);
@@ -87,6 +89,26 @@ public class Model : MonoBehaviour{	public float scale;
                 verticesDict[key].Add(i);
             }
         }
+    }
+
+    public void ResetIndexNeighborDict() {
+        Debug.Log("Recomputing Index-Neighbor Dictionary");
+        indexNeighborDict = new Dictionary<int, List<int>>();
+        indexNeighborDict = ModelHelper.CreateIndexNeighborDictionary(this);
+    }
+
+    public void ApplyLaplacianFilter() {
+        ApplyLaplacianFilterTimes(1);
+    }
+
+    public void ApplyLaplacianFilterTimes(int iterations) {
+        Debug.Log(string.Format("Applying Laplacian Filter {0} time{1}", iterations, iterations > 1 ? "s" : ""));
+        // TODO - Re-enable once we change menus to the way they will be in branch menu_changes
+        //MenuController.Instance.ActivateStaticMenu(StaticMenuType.LOADING_MENU);
+        vertices = ModelHelper.ComputeLaplacianFilterTimes(this, iterations);
+		UpdateMesh();
+		UpdateCollider();
+        //MenuController.Instance.DeactivateStaticMenu(StaticMenuType.LOADING_MENU);
     }
 
 	public void TransferKey(string oldKey, string newKey) {
