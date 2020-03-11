@@ -8,6 +8,10 @@ using UnityEngine;
 
 public class ExportObj : MonoBehaviour
 {
+
+    string savedFilePath = "";
+    string savedFileName = "";
+
     public void SaveFile()
     {
         MeshFilter[] filters = FindObjectsOfType<MeshFilter>();
@@ -15,6 +19,7 @@ public class ExportObj : MonoBehaviour
             new ExtensionFilter("Waveform obj", "obj")
         };
         var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", extensionList);
+        savedFilePath = path.ToString();
         Debug.Log(path);
         bool flag = false;
         Stack<string> reverseName = new Stack<string>();
@@ -31,6 +36,7 @@ public class ExportObj : MonoBehaviour
                         fileName = fileName + item;
                     }
                     path = path.Remove(path.Length - fileName.Length - 1);
+                    savedFileName = fileName;
                     fileName = fileName.Remove(fileName.Length-4,4);
                     SaveModels(fileName, path);
                     return;
@@ -44,6 +50,24 @@ public class ExportObj : MonoBehaviour
     {
         public string name;
         public string textureName;
+    }
+
+    public string SavedFilePath {
+        get {
+            return this.savedFilePath;
+        }
+        set {
+            this.savedFilePath = value;
+        }
+    }
+
+    public string SavedFileName {
+        get {
+            return this.savedFileName;
+        }
+        set {
+            this.savedFileName = value;
+        }
     }
 
     public int vertexOffset = 0;
@@ -182,6 +206,6 @@ public class ExportObj : MonoBehaviour
 
         if (filters.Length == 0) return;
 
-        MeshesToFile(filters, path, fileName + ".obj");
+        MeshesToFile(filters, path, fileName);
     }
 }
