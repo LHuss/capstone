@@ -12,7 +12,6 @@ public class MovementController : Singleton<MovementController> {
 	readonly String mouseScrollWheelInput = "Mouse ScrollWheel";	
 	readonly String mouseXAxisInput = "Mouse X";
 	readonly String mouseYAxisInput = "Mouse Y";
-	readonly KeyCode disableObjectMovement = KeyCode.LeftShift;
 
 	readonly float zoomSensitivity = 2f;
 	readonly float mouseScrollDampening = 6f;
@@ -33,11 +32,13 @@ public class MovementController : Singleton<MovementController> {
 	}	
 	
 	public void RestrictMovement(){
-		isMovementRestricted = false;
+		isMovementRestricted = true;
+		Debug.Log("Mouse camera movement restricted.");
 	}
 
 	public void UnrestrictMovement(){
-		isMovementRestricted = true;
+		isMovementRestricted = false;
+		Debug.Log("Mouse camera movement unrestricted.");
 	}
 
 	public Transform TransformObject {
@@ -102,7 +103,7 @@ public class MovementController : Singleton<MovementController> {
 			return this.isMovementRestricted;
 		}
 		set {
-			this.isMovementRestricted = !this.isMovementRestricted;
+			this.isMovementRestricted = value;
 		}
 	}
 
@@ -155,7 +156,7 @@ public class MovementController : Singleton<MovementController> {
 		scrollDepth = scrollDepth * this.objectDistance * 0.25f;
 
 		this.objectDistance += scrollDepth * 1f;
-		Debug.Log(this.objectDistance);
+
 		if(this.objectDistance < this.objectMinDistance){
 			this.objectDistance = this.objectMinDistance;
 		}
@@ -167,14 +168,6 @@ public class MovementController : Singleton<MovementController> {
 	}
 
 	public void HandleObject(){
-
-		if(Input.GetKeyDown(disableObjectMovement)){
-			if(isMovementRestricted)
-				UnrestrictMovement();
-			else
-				RestrictMovement();
-		}
-
 		if(!isMovementRestricted){
 
 			float mouseXInputAmount = Input.GetAxis(mouseXAxisInput);

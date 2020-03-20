@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ObjectMovement : MonoBehaviour {
+	readonly KeyCode disableObjectMovement = KeyCode.LeftShift;
 
 	protected Transform transformObject;
 	protected Transform transformParent;
@@ -26,6 +27,14 @@ public class ObjectMovement : MonoBehaviour {
 	
 	void Update() {
 		// Handle object movement using gestures if mouse movement is restricted
+		if(Input.GetKeyDown(disableObjectMovement)){
+			Debug.Log(MovementController.Instance.IsMovementRestricted);
+			if(MovementController.Instance.IsMovementRestricted)
+				MovementController.Instance.UnrestrictMovement();
+			else
+				MovementController.Instance.RestrictMovement();
+		}
+
 		if(MovementController.Instance.IsMovementRestricted)
 			GestureController.Instance.HandleGestures();
 		else

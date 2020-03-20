@@ -10,32 +10,80 @@ public class GestureController : Singleton<GestureController> {
 
     void Start(){
         this.controller = new Controller();
-        this.frame = controller.Frame();
     }
 
     public void HandleGestures(){
-        this.frame = controller.Frame();
-        List<Hand> hands = frame.Hands;
-        
-        if (frame.Hands.Count > 0 && hands[0].IsLeft &&
-                    !hands[0].Fingers[0].IsExtended &&
-                    !hands[0].Fingers[1].IsExtended &&
-                    !hands[0].Fingers[2].IsExtended &&
-                    !hands[0].Fingers[3].IsExtended &&
-                    !hands[0].Fingers[4].IsExtended){
-            
-            var leftPitch = hands[0].PalmNormal.Pitch;
-            var leftRoll = hands[0].PalmNormal.Roll;
-            var leftYaw = hands[0].PalmNormal.Yaw;
+        if (!mvmtCtrl.IsMovementRestricted)
+            return;
 
-            if (leftPitch > -2f && leftPitch < 3.5f){
-                mvmtCtrl.RotateObject(0.1f, 0, 0);
+        try{
+            this.frame = this.controller.Frame();
+            List<Hand> hands = frame.Hands;
+        
+            foreach(var hand in frame.Hands){
+                if (hand.IsLeft)
+                    HandleLeftHand(hand);
+                else
+                    HandleRightHand(hand);
             }
-            else if (leftPitch < -2.2f){
+        }
+        catch(NullReferenceException ex){
+            Debug.Log("No hands detected: \n" + ex);
+        }
+    }
+
+    private void HandleLeftHand(Hand left){
+        /* Left hand gesture: Fist
+        *  Controls rotation of the model 
+        */
+        if(isFist(left)){
+            var pitch = left.PalmNormal.Pitch;
+            var roll = left.PalmNormal.Roll;
+
+            if (pitch > -2f && pitch < 3.5f){
                 mvmtCtrl.RotateObject(-0.1f, 0, 0);
             }
-			Quaternion q = Quaternion.Euler(mvmtCtrl.RotationVect.x, mvmtCtrl.RotationVect.y, mvmtCtrl.RotationVect.z);
-			mvmtCtrl.TransformObject.rotation = Quaternion.Lerp(mvmtCtrl.TransformObject.rotation, q, Time.deltaTime*mvmtCtrl.RotationSpeed);
+            else if (pitch < -2.2f){
+                mvmtCtrl.RotateObject(0.1f, 0, 0);
+            }
+
+            if (roll > -2f && roll < 3.5f){
+                mvmtCtrl.RotateObject(0, -0.1f, 0);
+            }
+            else if (roll < -2.2f){
+                mvmtCtrl.RotateObject(0, 0.1f, 0);
+            }
+
+            Quaternion q = Quaternion.Euler(mvmtCtrl.RotationVect.x, mvmtCtrl.RotationVect.y, mvmtCtrl.RotationVect.z);
+            mvmtCtrl.TransformObject.rotation = Quaternion.Lerp(mvmtCtrl.TransformObject.rotation, q, Time.deltaTime*mvmtCtrl.RotationSpeed);
         }
+    }
+    private void HandleRightHand(Hand right){
+        if(isFist(right)){
+            float zoomDist = Time.deltaTime * mvmtCtrl.ZoomSensitivity;
+            var pitch = right.PalmNormal.Pitch;
+
+            if (pitch > -2f && pitch < 3.5f){
+                mvmtCtrl.ZoomObject(-zoomDist);
+            }
+            else if (pitch < -2.2f){
+                mvmtCtrl.ZoomObject(zoomDist);
+            }
+            mvmtCtrl.TransformObject.localPosition = new Vector3(
+                mvmtCtrl.TransformObject.localPosition.x,
+                mvmtCtrl.TransformObject.localPosition.y,
+                Mathf.Lerp(
+                    mvmtCtrl.TransformObject.localPosition.z,
+                    mvmtCtrl.ObjectDistance,
+                    Time.deltaTime));
+        }
+    }
+
+    private bool isFist(Hand hand){
+        return !hand.Fingers[0].IsExtended &&
+            !hand.Fingers[1].IsExtended &&
+            !hand.Fingers[2].IsExtended &&
+            !hand.Fingers[3].IsExtended &&
+            !hand.Fingers[4].IsExtended;
     }
 }
