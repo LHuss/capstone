@@ -38,6 +38,13 @@ public class ImportFromCloud : MonoBehaviour {
         DisplayFiles(fileList);
     }
 
+    public void OnExit() {
+        if (ScrollView != null && ScrollView.active == true)
+        {
+            ScrollView.SetActive(false);
+        }
+    }
+
     public void DisplayFiles(List<Google.Apis.Storage.v1.Data.Object> flist) {
         string allFiles = "";
         foreach (var file in flist)
@@ -52,7 +59,7 @@ public class ImportFromCloud : MonoBehaviour {
         }
 
         // display panel
-        if (ScrollView != null)
+        if (ScrollView != null && ScrollView.active == false)
         {
             ScrollView.SetActive(true);
         }
@@ -69,6 +76,7 @@ public class ImportFromCloud : MonoBehaviour {
             sc.DownloadObject(bn, objectName, outputFile);
         }
         Debug.Log($"downloaded {objectName} to {localPath}.");
+        ScrollView.SetActive(false);
     }
     
     public List<Google.Apis.Storage.v1.Data.Object> GetFileList() {
