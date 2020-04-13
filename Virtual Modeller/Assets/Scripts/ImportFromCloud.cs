@@ -77,6 +77,14 @@ public class ImportFromCloud : MonoBehaviour {
         }
         Debug.Log($"downloaded {objectName} to {localPath}.");
         ScrollView.SetActive(false);
+        LoadFile(localPath);
+    }
+
+    public void LoadFile(string filePath) {
+        ImportObj iobj = new ImportObj();
+        Debug.Log(filePath);
+        iobj.ImportObjFromFile(filePath);
+
     }
     
     public List<Google.Apis.Storage.v1.Data.Object> GetFileList() {
