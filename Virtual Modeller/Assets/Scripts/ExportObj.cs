@@ -14,7 +14,7 @@ public class ExportObj : MonoBehaviour
 
     public void SaveFile()
     {
-        MeshFilter[] filters = FindObjectsOfType<MeshFilter>();
+        MeshFilter filters = MeshController.Instance.Model.GetComponent<MeshFilter>();
         ExtensionFilter[] extensionList = new[] {
             new ExtensionFilter("Waveform obj", "obj")
         };
@@ -169,18 +169,16 @@ public class ExportObj : MonoBehaviour
 
     }
 
-    void MeshesToFile(MeshFilter[] mf, string folder, string filename)
+    void MeshesToFile(MeshFilter mf, string folder, string filename)
     {
         Dictionary<string, ObjMaterial> materialList = PrepareFileWrite();
 
         using (StreamWriter sw = new StreamWriter(folder + "/" + filename + ".obj"))
         {
-            sw.Write("mtllib ./" + filename + ".mtl\n");
+            sw.Write("mtllib " + filename + ".mtl\n");
 
-            for (int i = 0; i < mf.Length; i++)
-            {
-                sw.Write(MeshToString(mf[i], materialList));
-            }
+            sw.Write(MeshToString(mf, materialList));
+            
         }
 
     }
@@ -202,9 +200,9 @@ public class ExportObj : MonoBehaviour
 
     public void SaveModels(string fileName, string path)
     {
-        MeshFilter[] filters = FindObjectsOfType<MeshFilter>();
+        MeshFilter filters = MeshController.Instance.Model.GetComponent<MeshFilter>();
 
-        if (filters.Length == 0) return;
+        if (filters == null) return;
 
         MeshesToFile(filters, path, fileName);
     }
