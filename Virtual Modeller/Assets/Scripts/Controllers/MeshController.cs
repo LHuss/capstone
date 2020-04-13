@@ -57,6 +57,11 @@ public class MeshController : Singleton<MeshController> {
 		_currentState = _states.First;
 	}
 
+	public void DestroyModel() {
+		Debug.Log("Destroying Model");
+		Destroy(_model.gameObject);
+	}
+
 	void Update(){
         if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)){
 			if(Input.GetKeyDown(KeyCode.Z)){

@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Model : MonoBehaviour{	public float scale;
+public class Model : MonoBehaviour{
+    public float scale;
 	public List<Vector3> vertices;
 	public List<Vector3> normals;
     public List<int> triangles;
