@@ -40,10 +40,10 @@ public class ToolControllerTest {
 		Vector3 expectedPosition = Camera.main.gameObject.transform.position + desiredLookAt;
 		Assert.AreEqual(expectedPosition, tc.ToolPosition);
 
-		Assert.AreEqual(ToolType.TOOL_CUBE, tc.ActiveToolType);
+		Assert.AreEqual(ToolType.TOOL_HAND, tc.ActiveToolType);
 
 		foreach(KeyValuePair<ToolType, Tool> tool in tc.Tools) {
-			bool expectedActive = ((Tool) tool.Value).Type == ToolType.TOOL_CUBE;
+			bool expectedActive = ((Tool) tool.Value).Type == ToolType.TOOL_HAND;
 			Assert.AreEqual(expectedActive, ((Tool) tool.Value).IsActive);
 		}
 	}

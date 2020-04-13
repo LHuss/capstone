@@ -11,7 +11,7 @@ public class ToolLoaderScript : MonoBehaviour {
 		ToolController.Instance.Tools[rod.Type] = rod;
 		Tool sphere = gameObject.AddComponent<SphereTool>();
 		ToolController.Instance.Tools[sphere.Type] = sphere;
-		ToolController.Instance.ActiveToolType = ToolType.TOOL_CUBE;
+		ToolController.Instance.ActiveToolType = ToolType.TOOL_HAND;
 		ToolController.Instance.ForceUpdate();
 	}
 }
