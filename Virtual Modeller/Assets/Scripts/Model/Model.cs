@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,8 @@ public class Model : MonoBehaviour{	public float scale;
     public List<int> triangles;
     public Dictionary<string, List<int>> verticesDict;
     public Dictionary<int, List<int>> indexNeighborDict;
+    public HashSet<int> editedIndices;
+    public long lastEdited;
 
     /*
 	*	Assign Mesh filter to class variable to reduce mem-alloc each time
@@ -17,6 +20,7 @@ public class Model : MonoBehaviour{	public float scale;
         vertices = new List<Vector3>(GetComponent<MeshFilter>().sharedMesh.vertices);
         normals = new List<Vector3>(GetComponent<MeshFilter>().sharedMesh.normals);
         triangles = new List<int>(GetComponent<MeshFilter>().sharedMesh.triangles);
+        editedIndices = new HashSet<int>();
 		Debug.Log("Initialized Model");
 	}
 
@@ -97,18 +101,21 @@ public class Model : MonoBehaviour{	public float scale;
         indexNeighborDict = ModelHelper.CreateIndexNeighborDictionary(this);
     }
 
-    public void ApplyLaplacianFilter() {
-        ApplyLaplacianFilterTimes(1);
-    }
-
-    public void ApplyLaplacianFilterTimes(int iterations) {
-        Debug.Log(string.Format("Applying Laplacian Filter {0} time{1}", iterations, iterations > 1 ? "s" : ""));
-        // TODO - Re-enable once we change menus to the way they will be in branch menu_changes
-        //MenuController.Instance.ActivateStaticMenu(StaticMenuType.LOADING_MENU);
-        vertices = ModelHelper.ComputeLaplacianFilterTimes(this, iterations);
+    public void ApplyGlobalLaplacianFilter() {
+        vertices = ModelHelper.ComputeGlobalLaplacianFilter(this);
 		UpdateMesh();
 		UpdateCollider();
-        //MenuController.Instance.DeactivateStaticMenu(StaticMenuType.LOADING_MENU);
+    }
+
+    public void ApplyLocalLaplacianFilter() {
+        ApplyLocalLaplacianFilterTimes(1);
+    }
+
+    public void ApplyLocalLaplacianFilterTimes(int iterations) {
+        this.vertices = ModelHelper.ComputeLaplacianFilterTimes(this.vertices, this.indexNeighborDict, iterations, this.editedIndices);
+		UpdateMesh();
+		UpdateCollider();
+        this.editedIndices.Clear();
     }
 
 	public void TransferKey(string oldKey, string newKey) {
@@ -124,6 +131,25 @@ public class Model : MonoBehaviour{	public float scale;
         
         verticesDict.Remove(oldKey);
 	}
+
+    public void UpdateVertex(int index, Vector3 vertex) {
+        this.vertices[index] = vertex;
+		this.editedIndices.Add(index);
+        this.lastEdited = DateTime.Now.Ticks;
+    }
+
+    public bool TrySmoothing() {
+        long now = DateTime.Now.Ticks;
+        long elapsedTicks = now - this.lastEdited;
+        TimeSpan elapsed = new TimeSpan(elapsedTicks);
+
+        if(elapsed.TotalSeconds >= 3) {
+            this.ApplyLocalLaplacianFilter();
+            this.lastEdited = now;
+            return true;
+        }
+        return false;
+    }
 
     private int _GetNewVertex(int i1, int i2, Dictionary<uint, int> newVectices)
     {

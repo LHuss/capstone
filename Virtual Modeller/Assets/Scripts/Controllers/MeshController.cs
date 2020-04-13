@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class MeshController : Singleton<MeshController> {
 	private static LinkedListNode<object[]> _currentState;
 	private static int _stateTimer;
 	private static bool isNewState = false;
+	private static bool modelWasUpdated;
 
 
 	public Model Model {
@@ -72,7 +74,7 @@ public class MeshController : Singleton<MeshController> {
 			}
 		}
 		if(Input.GetKeyDown(KeyCode.L)) {
-			_model.ApplyLaplacianFilter();
+			_model.ApplyGlobalLaplacianFilter();
 		}
 		if(_stateTimer > 0){
 			_stateTimer--;
@@ -86,6 +88,9 @@ public class MeshController : Singleton<MeshController> {
 			}
 			_stateTimer = STATE_SAVE_RATE;
 			isNewState = false;
+		}
+		if (modelWasUpdated && _model.TrySmoothing()) {
+			modelWasUpdated = false;
 		}
 	}
 
@@ -124,8 +129,11 @@ public class MeshController : Singleton<MeshController> {
 			Vector3 globalPoint = transform.TransformPoint(_model.vertices[i]);
 			for (int j = 0; j < contactPoints.Length; j++){
 				if (SameGlobalPoint(contactPoints[j].point, globalPoint)){
-					_model.vertices[i] = transform.InverseTransformPoint(
-						Deform(globalPoint, contactPoints[j].normal));
+					Vector3 newVertex = transform.InverseTransformPoint(
+						Deform(globalPoint, contactPoints[j].normal)
+					);
+					_model.UpdateVertex(i, newVertex);
+					modelWasUpdated = true;
 				}
 			}
 		}
