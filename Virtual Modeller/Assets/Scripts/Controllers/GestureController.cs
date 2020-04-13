@@ -41,17 +41,17 @@ public class GestureController : Singleton<GestureController> {
             var roll = left.PalmNormal.Roll;
 
             if (pitch > -2f && pitch < 3.5f){
-                mvmtCtrl.RotateObject(-0.1f, 0, 0);
+                mvmtCtrl.RotateObject(-0.05f, 0, 0);
             }
             else if (pitch < -2.2f){
-                mvmtCtrl.RotateObject(0.1f, 0, 0);
+                mvmtCtrl.RotateObject(0.05f, 0, 0);
             }
 
             if (roll > -2f && roll < 3.5f){
-                mvmtCtrl.RotateObject(0, -0.1f, 0);
+                mvmtCtrl.RotateObject(0, -0.05f, 0);
             }
             else if (roll < -2.2f){
-                mvmtCtrl.RotateObject(0, 0.1f, 0);
+                mvmtCtrl.RotateObject(0, 0.05f, 0);
             }
 
             Quaternion q = Quaternion.Euler(mvmtCtrl.RotationVect.x, mvmtCtrl.RotationVect.y, mvmtCtrl.RotationVect.z);
