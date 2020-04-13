@@ -25,7 +25,7 @@ public class ImportFromCloud : MonoBehaviour {
     // Use this for initialization
     void Start () {
         string currLocalDir = Directory.GetCurrentDirectory();
-        string default_cred_path = currLocalDir + "\\library\\stately-mote-267221-0b07ba79bf7a.json";
+        string default_cred_path = currLocalDir + "\\Assets\\ThirdParty\\stately-mote-267221-0b07ba79bf7a.json";
         System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", default_cred_path);
     }
 
@@ -90,7 +90,7 @@ public class ImportFromCloud : MonoBehaviour {
          
         string credentialsJson = "";
         
-        using (StreamReader r = new StreamReader(currLocalDir + "\\library\\stately-mote-267221-0b07ba79bf7a.json"))
+        using (StreamReader r = new StreamReader(currLocalDir + "\\Assets\\ThirdParty\\stately-mote-267221-0b07ba79bf7a.json"))
         {
             credentialsJson = r.ReadToEnd();
         }
