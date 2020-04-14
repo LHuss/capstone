@@ -30,14 +30,14 @@ FBXHeaderExtension:  {
 			Comment: ""
 		}
 		Properties70:  {
-			P: "DocumentUrl", "KString", "Url", "", "/Users/bfox/FoxLeapProjects/UnityModules/Assets/LeapMotionModules/Hands/Models/LoPoly_Rigged_Hands_Skeleton.fbx"
-			P: "SrcDocumentUrl", "KString", "Url", "", "/Users/bfox/FoxLeapProjects/UnityModules/Assets/LeapMotionModules/Hands/Models/LoPoly_Rigged_Hands_Skeleton.fbx"
+			P: "DocumentUrl", "KString", "Url", "", "/Users/bfox/FoxLeapProjects/UnityModules/"Assets/ThirdParty/LeapMotionModules/Hands/Models/LoPoly_Rigged_Hands_Skeleton.fbx"
+			P: "SrcDocumentUrl", "KString", "Url", "", "/Users/bfox/FoxLeapProjects/UnityModules/"Assets/ThirdParty/LeapMotionModules/Hands/Models/LoPoly_Rigged_Hands_Skeleton.fbx"
 			P: "Original", "Compound", "", ""
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "Maya"
 			P: "Original|ApplicationVersion", "KString", "", "", "2015"
 			P: "Original|DateTime_GMT", "DateTime", "", "", "15/07/2016 17:40:31.000"
-			P: "Original|FileName", "KString", "", "", "/Users/bfox/FoxLeapProjects/UnityModules/Assets/LeapMotionModules/Hands/Models/LoPoly_Rigged_Hands_Skeleton.fbx"
+			P: "Original|FileName", "KString", "", "", "/Users/bfox/FoxLeapProjects/UnityModules/"Assets/ThirdParty/LeapMotionModules/Hands/Models/LoPoly_Rigged_Hands_Skeleton.fbx"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "Maya"

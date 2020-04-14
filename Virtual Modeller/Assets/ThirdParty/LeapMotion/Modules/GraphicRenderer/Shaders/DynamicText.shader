@@ -22,7 +22,7 @@
 
       #pragma shader_feature _ GRAPHIC_RENDERER_CYLINDRICAL GRAPHIC_RENDERER_SPHERICAL
       #pragma shader_feature _ GRAPHIC_RENDERER_VERTEX_COLORS
-      #include "Assets/LeapMotion/Modules/GraphicRenderer/Resources/DynamicRenderer.cginc"
+      #include "Assets/ThirdParty/LeapMotion/Modules/GraphicRenderer/Resources/DynamicRenderer.cginc"
       #include "UnityCG.cginc"
 
       sampler2D _MainTex;
