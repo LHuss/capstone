@@ -333,9 +333,6 @@ GameObject:
   - component: {fileID: 114208229902514966}
   - component: {fileID: 114966782633444340}
   - component: {fileID: 114149632366895362}
-  - component: {fileID: 114215530918551878}
-  - component: {fileID: 114438746971604762}
-  - component: {fileID: 114886643046003690}
   - component: {fileID: 114108738082534632}
   m_Layer: 5
   m_Name: ToolSwapper
@@ -849,17 +846,6 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
---- !u!114 &114215530918551878
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1842825013988188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 494175b384fdc384d9761c33ed48d87c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114223462595633658
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -958,17 +944,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114438746971604762
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1842825013988188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e876874f819dda0449adc7791cf97924, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114485070066490322
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1421,17 +1396,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114886643046003690
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1842825013988188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a9202ffe9725584fbfd17b78e929d6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114893949703259210
 MonoBehaviour:
   m_ObjectHideFlags: 1
