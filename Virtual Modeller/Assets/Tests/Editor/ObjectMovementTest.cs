@@ -14,7 +14,7 @@ public class ObjectMovementTest {
 			sphere.AddComponent<ObjectMovement>();
 			float mockXMovement = -0.05f;
 			float mockYMovement = 0f;
-			var mockMovementResult = MovementController.Instance.RotateObject(mockXMovement, mockYMovement);
+			var mockMovementResult = MovementController.Instance.RotateObject(mockXMovement, mockYMovement, 0);
 			Tuple<float, float> expectedResult = new Tuple<float, float>(-0.4f, 0f);
 			Assert.AreEqual(expectedResult, mockMovementResult);
 		} catch(Exception ex) {
@@ -29,7 +29,7 @@ public class ObjectMovementTest {
 			sphere.AddComponent<ObjectMovement>();
 			float mockXMovement = -0.05f;
 			float mockYMovement = 0f;
-			var mockMovementResult = MovementController.Instance.RotateObject(mockXMovement, mockYMovement);
+			var mockMovementResult = MovementController.Instance.RotateObject(mockXMovement, mockYMovement, 0 );
 			Tuple<float, float> expectedResult = new Tuple<float, float>(100f, 0f);
 			Assert.AreEqual(expectedResult, mockMovementResult);
 		} catch(AssertionException ex) {
