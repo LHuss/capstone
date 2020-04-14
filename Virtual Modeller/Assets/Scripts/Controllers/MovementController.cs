@@ -246,7 +246,7 @@ public class MovementController : Singleton<MovementController> {
 				ResetPosition();
 			}
 
-			// Prints the current camera position into the console
+			// Prints the current object position into the console
 			if(Input.GetKey("p")){
 				Debug.Log("Getting current object position...");
 				Debug.Log(this.transformObject.position);

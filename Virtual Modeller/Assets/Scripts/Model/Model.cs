@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,10 @@ public class Model : MonoBehaviour{	public float scale;
 	public List<Vector3> vertices;
 	public List<Vector3> normals;
     public List<int> triangles;
+    public Dictionary<string, List<int>> verticesDict;
+    public Dictionary<int, List<int>> indexNeighborDict;
+    public HashSet<int> editedIndices;
+    public long lastEdited;
 
     /*
 	*	Assign Mesh filter to class variable to reduce mem-alloc each time
@@ -15,6 +20,7 @@ public class Model : MonoBehaviour{	public float scale;
         vertices = new List<Vector3>(GetComponent<MeshFilter>().sharedMesh.vertices);
         normals = new List<Vector3>(GetComponent<MeshFilter>().sharedMesh.normals);
         triangles = new List<int>(GetComponent<MeshFilter>().sharedMesh.triangles);
+        editedIndices = new HashSet<int>();
 		Debug.Log("Initialized Model");
 	}
 
@@ -68,6 +74,79 @@ public class Model : MonoBehaviour{	public float scale;
         currentState[2] = new List<Vector3>(this.normals);
         currentState[3] = new List<int>(this.triangles);
         return currentState;
+    }
+
+    public void ResetVerticesDict(int accuracy) {
+        Debug.Log("Recomputing Vertices Dictionary");
+        verticesDict = new Dictionary<string, List<int>>();
+        for (int i=0; i < vertices.Count; i++) {
+            Vector3 worldPos = transform.TransformPoint(vertices[i]);
+
+            string key = VertexHelper.HashVertex(worldPos, accuracy);
+
+            if (!verticesDict.ContainsKey(key)) {
+                verticesDict.Add(key, new List<int>(){i});
+			}
+            else {
+                verticesDict[key].Add(i);
+            }
+        }
+    }
+
+    public void ResetIndexNeighborDict() {
+        Debug.Log("Recomputing Index-Neighbor Dictionary");
+        indexNeighborDict = new Dictionary<int, List<int>>();
+        indexNeighborDict = ModelHelper.CreateIndexNeighborDictionary(this);
+    }
+
+    public void ApplyGlobalLaplacianFilter() {
+        vertices = ModelHelper.ComputeGlobalLaplacianFilter(this);
+		UpdateMesh();
+		UpdateCollider();
+    }
+
+    public void ApplyLocalLaplacianFilter() {
+        ApplyLocalLaplacianFilterTimes(1);
+    }
+
+    public void ApplyLocalLaplacianFilterTimes(int iterations) {
+        this.vertices = ModelHelper.ComputeLaplacianFilterTimes(this.vertices, this.indexNeighborDict, iterations, this.editedIndices);
+		UpdateMesh();
+		UpdateCollider();
+        this.editedIndices.Clear();
+    }
+
+	public void TransferKey(string oldKey, string newKey) {
+        List<int> indecesToMove = verticesDict[oldKey];
+        
+		if (verticesDict.ContainsKey(newKey)) {
+            for (int i = 0; i < indecesToMove.Count; i++) {
+                verticesDict[newKey].Add(verticesDict[oldKey][i]);
+            }
+		} else {
+            verticesDict.Add(newKey, indecesToMove);
+        }
+        
+        verticesDict.Remove(oldKey);
+	}
+
+    public void UpdateVertex(int index, Vector3 vertex) {
+        this.vertices[index] = vertex;
+		this.editedIndices.Add(index);
+        this.lastEdited = DateTime.Now.Ticks;
+    }
+
+    public bool TrySmoothing() {
+        long now = DateTime.Now.Ticks;
+        long elapsedTicks = now - this.lastEdited;
+        TimeSpan elapsed = new TimeSpan(elapsedTicks);
+
+        if(elapsed.TotalSeconds >= 3) {
+            this.ApplyLocalLaplacianFilter();
+            this.lastEdited = now;
+            return true;
+        }
+        return false;
     }
 
     private int _GetNewVertex(int i1, int i2, Dictionary<uint, int> newVectices)
