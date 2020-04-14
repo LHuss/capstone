@@ -32,8 +32,16 @@ public class ImportObj : MonoBehaviour
         Camera cam = Camera.main;
         ImportOptions importOptions = new ImportOptions();
         importOptions.modelScaling = 1f;
+        GameObject gameObject = new GameObject();
         gameObject.AddComponent<ObjectImporter>();
         ObjectImporter objImporter = gameObject.GetComponent<ObjectImporter>();
+
+        Debug.Log(fp);
+        Debug.Log(filePath);
+        if (filePath=="") {
+            filePath = fp;
+        }
+        Debug.Log(filePath);
         objImporter.ImportModelAsync("My Object", filePath, null, importOptions);
         objImporter.ImportedModel += (GameObject importedObject, string path) =>
         {
