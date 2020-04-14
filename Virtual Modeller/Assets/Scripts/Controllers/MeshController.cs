@@ -54,7 +54,9 @@ public class MeshController : Singleton<MeshController> {
 
 		AttachMesh(this.gameObject);
 		_model.Start();
-		_model.Subdivide();
+		if(_model.vertices.Count < 2000){
+			_model.Subdivide();
+		}
 		_model.UpdateMesh();
 		_model.UpdateCollider();
 		//_model.ResetVerticesDict(_collisionDecimals);
@@ -65,8 +67,10 @@ public class MeshController : Singleton<MeshController> {
 	}
 
 	public void DestroyModel() {
-		Debug.Log("Destroying Model");
-		Destroy(_model.gameObject);
+		if(!!_model && !!_model.gameObject) {
+			Debug.Log("Destroying Model");
+			Destroy(_model.gameObject);
+		}
 	}
 
 	void Update(){
@@ -187,7 +191,7 @@ public class MeshController : Singleton<MeshController> {
 
 	// returns deformation intensity depending on DEFORMATION_FORCE
 	private Vector3 _GetCollisionNormal(Vector3 collisionNormal){
-		return collisionNormal * _deformationForce;
+		return collisionNormal * _deformationForce * ToolController.Instance.Hardness;
 	}
 
 	// undo the last modification performed on the model
