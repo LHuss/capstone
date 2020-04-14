@@ -191,7 +191,7 @@ public class MeshController : Singleton<MeshController> {
 
 	// returns deformation intensity depending on DEFORMATION_FORCE
 	private Vector3 _GetCollisionNormal(Vector3 collisionNormal){
-		return collisionNormal * _deformationForce;
+		return collisionNormal * _deformationForce * ToolController.Instance.Hardness;
 	}
 
 	// undo the last modification performed on the model
