@@ -74,46 +74,48 @@ public class MeshController : Singleton<MeshController> {
 	}
 
 	void Update(){
-        if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)){
-			if(Input.GetKeyDown(KeyCode.Z)){
-				Undo();
+		if(!!_model) {
+			if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)){
+				if(Input.GetKeyDown(KeyCode.Z)){
+					Undo();
+				}
+				if(Input.GetKeyDown(KeyCode.Y)){ 
+					Redo();
+				}
 			}
-			if(Input.GetKeyDown(KeyCode.Y)){ 
-				Redo();
+			if(Input.GetKeyDown(KeyCode.L)) {
+				_model.ApplyGlobalLaplacianFilter();
 			}
-		}
-		if(Input.GetKeyDown(KeyCode.L)) {
-			_model.ApplyGlobalLaplacianFilter();
-		}
-		if(_stateTimer > 0){
-			_stateTimer--;
-		}
-		else if (_stateTimer == 0 && isNewState){
-			_states.AddLast(_model.GetCurrentStateRepresentation());
-			_currentState = _states.Last;
-			Debug.Log("Count of saved model states: " + _states.Count);
-			if(_states.Count > MAXIMUM_STATES_COUNT){
-				_states.RemoveFirst();
+			if(_stateTimer > 0){
+				_stateTimer--;
 			}
-			_stateTimer = STATE_SAVE_RATE;
-			isNewState = false;
+			else if (_stateTimer == 0 && isNewState){
+				_states.AddLast(_model.GetCurrentStateRepresentation());
+				_currentState = _states.Last;
+				Debug.Log("Count of saved model states: " + _states.Count);
+				if(_states.Count > MAXIMUM_STATES_COUNT){
+					_states.RemoveFirst();
+				}
+				_stateTimer = STATE_SAVE_RATE;
+				isNewState = false;
+			}
+			if (modelWasUpdated && _model.TrySmoothing()) {
+				modelWasUpdated = false;
+			}
+			
+			// scale down
+			Vector3 modelScale = _model.gameObject.transform.localScale;
+			Vector3 scalingVector = new Vector3(1f, 1f, 1f) * 0.001f;
+			if (Input.GetKey(",")) {
+				modelScale -= scalingVector;
+			}
+			// scale up
+			if (Input.GetKey("."))
+			{
+				modelScale += scalingVector;
+			}
+			_model.gameObject.transform.localScale = modelScale;	
 		}
-		if (modelWasUpdated && _model.TrySmoothing()) {
-			modelWasUpdated = false;
-		}
-		
-		// scale down
-		Vector3 modelScale = _model.gameObject.transform.localScale;
-		Vector3 scalingVector = new Vector3(1f, 1f, 1f) * 0.001f;
-        if (Input.GetKey(",")) {
-			modelScale -= scalingVector;
-        }
-        // scale up
-        if (Input.GetKey("."))
-        {
-            modelScale += scalingVector;
-        }
-		_model.gameObject.transform.localScale = modelScale;
 	}
 
 	/*
