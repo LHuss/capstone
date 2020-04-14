@@ -151,7 +151,7 @@ namespace Leap.Unity.GraphicalRenderer {
 
   public abstract class LeapRenderingMethod<GraphicType> : LeapRenderingMethod
     where GraphicType : LeapGraphic {
-    public const string ASSET_PATH = "Assets/Generated/RendererData/";
+    public const string ASSET_PATH = "Assets/ThirdParty/Generated/RendererData/";
 
     public override bool IsValidGraphic<T>() {
       Type t = typeof(T);

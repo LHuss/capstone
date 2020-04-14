@@ -25,7 +25,7 @@ Shader "LeapMotion/GraphicRenderer/Surface/Dynamic Transparent" {
   //#pragma shader_feature _ GRAPHIC_RENDERER_BLEND_SHAPES
   //#pragma shader_feature _ GRAPHIC_RENDERER_ENABLE_CUSTOM_CHANNELS
     
-    #include "Assets/LeapMotion/Modules/GraphicRenderer/Resources/DynamicRenderer.cginc"
+    #include "Assets/ThirdParty/LeapMotion/Modules/GraphicRenderer/Resources/DynamicRenderer.cginc"
     #include "UnityCG.cginc"
 
     struct Input {
