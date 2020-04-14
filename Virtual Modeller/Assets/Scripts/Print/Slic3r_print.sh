@@ -1,0 +1,1 @@
+$slic3r -load Virtual_Modeller_config_bundle.ini -scale 150 --support-material --output ../../../obj/print.gcode ../../../obj/MySaveFile.obj > script_output.txt
