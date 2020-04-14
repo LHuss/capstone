@@ -1,10 +1,2 @@
 => Infilling layers
 => Processing triangulated mesh
-=> Preparing infill
-=> Generating support material
-=> Weight: 0.0g, Cost: 0.0
-=> Generating skirt
-=> Generating brim
-=> Exporting G-code to ../../../obj/print.gcode
-Done. Process took 0 minutes and 4.457 seconds
-Filament required: 9991.6mm (70.6cm3)
