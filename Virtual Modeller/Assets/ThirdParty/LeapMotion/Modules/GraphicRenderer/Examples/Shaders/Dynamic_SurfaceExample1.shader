@@ -21,7 +21,7 @@ Shader "Hidden/LeapMotion/GraphicRenderer/Examples/Dynamic 1" {
     #define GRAPHIC_RENDERER_ENABLE_CUSTOM_CHANNELS
 
     #pragma shader_feature _ GRAPHIC_RENDERER_CYLINDRICAL GRAPHIC_RENDERER_SPHERICAL
-    #include "Assets/LeapMotion/Modules/GraphicRenderer/Resources/DynamicRenderer.cginc"
+    #include "Assets/ThirdParty/LeapMotion/Modules/GraphicRenderer/Resources/DynamicRenderer.cginc"
     #include "UnityCG.cginc"
 
     struct Input {

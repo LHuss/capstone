@@ -57,11 +57,16 @@ public class MeshController : Singleton<MeshController> {
 		_model.Subdivide();
 		_model.UpdateMesh();
 		_model.UpdateCollider();
-		_model.ResetVerticesDict(_collisionDecimals);
+		//_model.ResetVerticesDict(_collisionDecimals);
 		_model.ResetIndexNeighborDict();
 		_states = new LinkedList<object[]>();
 		_states.AddLast(_model.GetCurrentStateRepresentation());
 		_currentState = _states.First;
+	}
+
+	public void DestroyModel() {
+		Debug.Log("Destroying Model");
+		Destroy(_model.gameObject);
 	}
 
 	void Update(){

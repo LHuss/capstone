@@ -8,7 +8,7 @@
 
     Pass{
     CGPROGRAM
-    #include "Assets/LeapMotion/Core/Resources/LeapCG.cginc"
+    #include "Assets/ThirdParty/LeapMotion/Core/Resources/LeapCG.cginc"
     #include "UnityCG.cginc"
     
     #pragma target 3.0
