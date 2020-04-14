@@ -101,6 +101,19 @@ public class MeshController : Singleton<MeshController> {
 		if (modelWasUpdated && _model.TrySmoothing()) {
 			modelWasUpdated = false;
 		}
+		
+		// scale down
+		Vector3 modelScale = _model.gameObject.transform.localScale;
+		Vector3 scalingVector = new Vector3(1f, 1f, 1f) * 0.001f;
+        if (Input.GetKey(",")) {
+			modelScale -= scalingVector;
+        }
+        // scale up
+        if (Input.GetKey("."))
+        {
+            modelScale += scalingVector;
+        }
+		_model.gameObject.transform.localScale = modelScale;
 	}
 
 	/*
