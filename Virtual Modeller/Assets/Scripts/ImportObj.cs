@@ -43,6 +43,7 @@ public class ImportObj : MonoBehaviour
         }
         Debug.Log(filePath);
         objImporter.ImportModelAsync("My Object", filePath, null, importOptions);
+        MeshController.Instance.DestroyModel();
         objImporter.ImportedModel += (GameObject importedObject, string path) =>
         {
             //manipulate the asynchronously imported object

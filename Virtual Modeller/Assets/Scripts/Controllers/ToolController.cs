@@ -69,6 +69,7 @@ public class ToolController : Singleton<ToolController> {
 		UpdateToolPosition();
 		tools = new Dictionary<ToolType, Tool>();
 		size = 1f;
+		hardness = 1f;
 	}
 	
 	private void UpdateToolPosition() {
