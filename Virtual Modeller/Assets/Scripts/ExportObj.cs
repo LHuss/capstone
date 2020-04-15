@@ -8,13 +8,18 @@ using UnityEngine;
 
 public class ExportObj : MonoBehaviour
 {
+
+    string savedFilePath = "";
+    string savedFileName = "";
+
     public void SaveFile()
     {
-        MeshFilter[] filters = FindObjectsOfType<MeshFilter>();
+        MeshFilter filters = MeshController.Instance.Model.GetComponent<MeshFilter>();
         ExtensionFilter[] extensionList = new[] {
             new ExtensionFilter("Waveform obj", "obj")
         };
         var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", extensionList);
+        savedFilePath = path.ToString();
         Debug.Log(path);
         bool flag = false;
         Stack<string> reverseName = new Stack<string>();
@@ -31,6 +36,7 @@ public class ExportObj : MonoBehaviour
                         fileName = fileName + item;
                     }
                     path = path.Remove(path.Length - fileName.Length - 1);
+                    savedFileName = fileName;
                     fileName = fileName.Remove(fileName.Length-4,4);
                     SaveModels(fileName, path);
                     return;
@@ -44,6 +50,24 @@ public class ExportObj : MonoBehaviour
     {
         public string name;
         public string textureName;
+    }
+
+    public string SavedFilePath {
+        get {
+            return this.savedFilePath;
+        }
+        set {
+            this.savedFilePath = value;
+        }
+    }
+
+    public string SavedFileName {
+        get {
+            return this.savedFileName;
+        }
+        set {
+            this.savedFileName = value;
+        }
     }
 
     public int vertexOffset = 0;
@@ -145,18 +169,16 @@ public class ExportObj : MonoBehaviour
 
     }
 
-    void MeshesToFile(MeshFilter[] mf, string folder, string filename)
+    void MeshesToFile(MeshFilter mf, string folder, string filename)
     {
         Dictionary<string, ObjMaterial> materialList = PrepareFileWrite();
 
         using (StreamWriter sw = new StreamWriter(folder + "/" + filename + ".obj"))
         {
-            sw.Write("mtllib ./" + filename + ".mtl\n");
+            sw.Write("mtllib " + filename + ".mtl\n");
 
-            for (int i = 0; i < mf.Length; i++)
-            {
-                sw.Write(MeshToString(mf[i], materialList));
-            }
+            sw.Write(MeshToString(mf, materialList));
+            
         }
 
     }
@@ -178,10 +200,10 @@ public class ExportObj : MonoBehaviour
 
     public void SaveModels(string fileName, string path)
     {
-        MeshFilter[] filters = FindObjectsOfType<MeshFilter>();
+        MeshFilter filters = MeshController.Instance.Model.GetComponent<MeshFilter>();
 
-        if (filters.Length == 0) return;
+        if (filters == null) return;
 
-        MeshesToFile(filters, path, fileName + ".obj");
+        MeshesToFile(filters, path, fileName);
     }
 }

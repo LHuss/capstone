@@ -20,6 +20,13 @@ Concordia Capstone Project 2019
 `File > Build And Run`
 2. Launch the built project
 
+## Setting up 3D printing:
+1. Have a valid 3D printing service set up. Ex: [Octoprint](https://octoprint.org/)
+2. Download [Slic3r](https://slic3r.org/download/)
+3. Set Environment variable `slic3r` to point to Slic3r-console.exe
+
+![](./Documentation assets/envVarConfig.png)
+
 
 ## Camera controls:
 See [the wiki](https://github.com/LHuss/capstone/wiki/User-Manual)

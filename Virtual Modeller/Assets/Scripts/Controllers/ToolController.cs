@@ -1,6 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using Leap.Unity.Interaction;
+using Leap.Unity.Query;
+using Leap.Unity;
 
 public class ToolController : Singleton<ToolController> {
 	private float hardness;
@@ -67,6 +69,7 @@ public class ToolController : Singleton<ToolController> {
 		UpdateToolPosition();
 		tools = new Dictionary<ToolType, Tool>();
 		size = 1f;
+		hardness = 1f;
 	}
 	
 	private void UpdateToolPosition() {
@@ -80,7 +83,7 @@ public class ToolController : Singleton<ToolController> {
 			// Shift tool to right in front of the camera's lookAt, and a bit up and to the side 
 			Vector3 desiredLookAt = boundedLookAt * 0.1f + new Vector3(0.1f, 0.05f, 0f); 
 			toolPosition = Camera.main.gameObject.transform.position + desiredLookAt;
-		}	
+		}
 	}
 
 	private void UpdateActive() {
@@ -88,6 +91,13 @@ public class ToolController : Singleton<ToolController> {
 		foreach(KeyValuePair<ToolType, Tool> tool in tools) {
 			bool active = tool.Key == activeToolType;
 			tools[tool.Key].ToolObject.SetActive(active);
+		}
+
+    
+		HandModelManager[] handModelManagers  = FindObjectsOfType<HandModelManager>();
+		bool shouldBeEnabled = activeToolType == ToolType.TOOL_HAND;
+		foreach (HandModelManager manager in handModelManagers) {
+			manager.GraphicsEnabled = shouldBeEnabled;
 		}
 	}
 }

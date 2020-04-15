@@ -12,14 +12,13 @@ public class MovementController : Singleton<MovementController> {
 	readonly String mouseScrollWheelInput = "Mouse ScrollWheel";	
 	readonly String mouseXAxisInput = "Mouse X";
 	readonly String mouseYAxisInput = "Mouse Y";
-	readonly KeyCode disableObjectMovement = KeyCode.LeftShift;
 
 	readonly float zoomSensitivity = 2f;
 	readonly float mouseScrollDampening = 6f;
 	readonly float panSensitivity = 2f;
 	readonly float rotationSpeed = 8f;
 	
-	protected bool isMovementRestricted = false;	
+	protected bool isMovementRestricted = true;	
 	protected float objectDistance = 0.2f;
 	protected Vector3 rotationVect;
 	protected Quaternion startingAngle;
@@ -32,8 +31,14 @@ public class MovementController : Singleton<MovementController> {
 		Debug.Log("Starting rotation position: " + this.rotationVect.x + ", " + this.rotationVect.y);
 	}	
 	
-	public void ToggleMvmtRestriction(){
-		isMovementRestricted=!isMovementRestricted;
+	public void RestrictMovement(){
+		isMovementRestricted = true;
+		Debug.Log("Mouse camera movement restricted.");
+	}
+
+	public void UnrestrictMovement(){
+		isMovementRestricted = false;
+		Debug.Log("Mouse camera movement unrestricted.");
 	}
 
 	public Transform TransformObject {
@@ -98,7 +103,7 @@ public class MovementController : Singleton<MovementController> {
 			return this.isMovementRestricted;
 		}
 		set {
-			this.isMovementRestricted = !this.isMovementRestricted;
+			this.isMovementRestricted = value;
 		}
 	}
 
@@ -136,12 +141,13 @@ public class MovementController : Singleton<MovementController> {
 		return new Tuple<float, float>(this.transformObject.rotation.x, this.transformObject.rotation.y);
 	}
 
-	public Tuple<float, float> RotateObject(float xmovement, float ymovement){
+	public Tuple<float, float, float> RotateObject(float xmovement, float ymovement, float zmovement){
 
 		this.rotationVect.x += xmovement * this.rotationSpeed;
-		this.rotationVect.y -= ymovement * this.rotationSpeed;	
+		this.rotationVect.y -= ymovement * this.rotationSpeed;
+		this.rotationVect.z += zmovement * this.rotationSpeed;
 
-		return new Tuple<float, float>(this.rotationVect.x, this.rotationVect.y);
+		return new Tuple<float, float, float>(this.rotationVect.x, this.rotationVect.y, this.rotationVect.z);
 	}
 
 	public float ZoomObject(float msw){
@@ -150,7 +156,7 @@ public class MovementController : Singleton<MovementController> {
 		scrollDepth = scrollDepth * this.objectDistance * 0.25f;
 
 		this.objectDistance += scrollDepth * 1f;
-		Debug.Log(this.objectDistance);
+
 		if(this.objectDistance < this.objectMinDistance){
 			this.objectDistance = this.objectMinDistance;
 		}
@@ -162,11 +168,6 @@ public class MovementController : Singleton<MovementController> {
 	}
 
 	public void HandleObject(){
-
-		if(Input.GetKeyDown(disableObjectMovement)){
-			ToggleMvmtRestriction();
-		}
-
 		if(!isMovementRestricted){
 
 			float mouseXInputAmount = Input.GetAxis(mouseXAxisInput);
@@ -205,7 +206,7 @@ public class MovementController : Singleton<MovementController> {
 			
 			// Rotate using mouse
 			if(mouseXInputAmount!=0 || mouseYInputAmount!=0){
-				RotateObject(mouseYInputAmount, mouseXInputAmount);
+				RotateObject(mouseYInputAmount, mouseXInputAmount, 0);
 			}
 
 			float xRot= Input.GetAxis("Vertical"); // Rotate along the Y axis
@@ -213,16 +214,16 @@ public class MovementController : Singleton<MovementController> {
 
 			// Rotate using keyboard
 			if(Input.GetKey("left")){ 
-				RotateObject(Time.deltaTime*xRot, yRot);
+				RotateObject(Time.deltaTime*xRot, yRot, 0);
 			}
 			if(Input.GetKey("right")){ 
-				RotateObject(Time.deltaTime*-xRot, yRot);
+				RotateObject(Time.deltaTime*-xRot, yRot, 0);
 			}
 			if(Input.GetKey("up")){ 
-				RotateObject(xRot, Time.deltaTime*yRot);
+				RotateObject(xRot, Time.deltaTime*yRot, 0);
 			}
 			if(Input.GetKey("down")){ 
-				RotateObject(xRot, Time.deltaTime*-yRot);
+				RotateObject(xRot, Time.deltaTime*-yRot, 0);
 			}
 
 			// Pan left or right using keyboard
@@ -245,15 +246,14 @@ public class MovementController : Singleton<MovementController> {
 				ResetPosition();
 			}
 
-			// Prints the current camera position into the console
+			// Prints the current object position into the console
 			if(Input.GetKey("p")){
 				Debug.Log("Getting current object position...");
 				Debug.Log(this.transformObject.position);
 			}
 
-			Quaternion q = Quaternion.Euler(rotationVect.x, rotationVect.y, 0);
+			Quaternion q = Quaternion.Euler(rotationVect.x, rotationVect.y, rotationVect.z);
 			this.transformObject.rotation = Quaternion.Lerp(this.transformObject.rotation, q, Time.deltaTime*this.rotationSpeed);
-
 		}
 	
 	}

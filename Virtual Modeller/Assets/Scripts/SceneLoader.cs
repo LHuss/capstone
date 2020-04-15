@@ -23,22 +23,20 @@ public class SceneLoader : MonoBehaviour {
     IEnumerator LoadAsynchronously (int sceneIndex)
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
-        loadingScreen.SetActive(true);
-        while (!operation.isDone)
-        {
-            // 0-0.9 loading, 0.9-1 activation
-            float progress = Mathf.Clamp01(operation.progress / .9f);
-            slider.value = progress;
-            loadingText.text = progress * 100f + "%";
-            // wait until next frame before continuing
-            yield return null;
-        }
+        yield return LoadAsynchronously(operation);
     }
 
     // coroutine to load scene asynchronously
     IEnumerator LoadAsynchronously(string sceneName)
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        yield return LoadAsynchronously(operation);
+    }
+
+    IEnumerator LoadAsynchronously(AsyncOperation operation)
+    {
+        Debug.Log("Starting Scene Switch coroutine");
+        MeshController.Instance.DestroyModel();
         loadingScreen.SetActive(true);
         while (!operation.isDone)
         {
@@ -49,6 +47,7 @@ public class SceneLoader : MonoBehaviour {
             // wait until next frame before continuing
             yield return null;
         }
+        Debug.Log("Scene Switch coroutine complete");
     }
 
 }
